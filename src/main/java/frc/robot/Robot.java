@@ -4,10 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -53,6 +55,11 @@ public class Robot extends TimedRobot {
   double x = 0;
   double y = 0;
   boolean exampleSensor = false;
+
+  @Override
+  public void robotInit() {
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+  }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
