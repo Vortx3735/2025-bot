@@ -61,6 +61,10 @@ public class Robot extends TimedRobot {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
   }
 
+  double x = 0;
+  double y = 0;
+  boolean exampleSensor = false;
+
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
