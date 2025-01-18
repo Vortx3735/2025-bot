@@ -51,7 +51,7 @@ public class RobotContainer {
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
-    autoChooser.addRoutine("SimplePath", autoRoutines::simplePathAuto);
+    autoChooser.addRoutine("Test Auto 1", autoRoutines::testAuto1);
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
@@ -97,6 +97,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoChooser.selectedCommand();
   }
 }
