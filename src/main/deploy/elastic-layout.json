@@ -1,0 +1,94 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "exampleSensor",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/datatable/exampleSensor",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "x",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/datatable/x",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "y",
+            "x": 640.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/datatable/y",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "Drivetrain",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "Elevator",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "Intake",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "Climber",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    }
+  ]
+}
