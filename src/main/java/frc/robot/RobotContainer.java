@@ -39,7 +39,7 @@ public class RobotContainer {
 
   private final CommandXboxController joystick = new CommandXboxController(0);
 
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   /* Path follower */
   private final AutoFactory autoFactory;
@@ -54,6 +54,17 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
+    configureNetworkTables();
+  }
+
+  private void configureNetworkTables() {
+    logger.configureNetworkTables();
+  }
+
+  public void updateNetworkTables() {
+    double[] robotPos = drivetrain.getRobotPosition();
+    double[] encoderPos = drivetrain.getEncoderPositions();
+    logger.updateNetworkTables(robotPos, encoderPos);
   }
 
   private void configureBindings() {
