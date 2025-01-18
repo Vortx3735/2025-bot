@@ -1,12 +1,14 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
 import choreo.Choreo.TrajectoryLogger;
 import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -48,6 +50,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final PIDController m_pathXController = new PIDController(10, 0, 0);
   private final PIDController m_pathYController = new PIDController(10, 0, 0);
   private final PIDController m_pathThetaController = new PIDController(7, 0, 0);
+
+  private final CANcoder frontRightCancoder = new CANcoder(15);
+  private final CANcoder frontLeftCancoder = new CANcoder(16);
+  private final CANcoder backRightCancoder = new CANcoder(17);
+  private final CANcoder backLeftCancoder = new CANcoder(18);
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
@@ -291,5 +298,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               updateSimState(deltaTime, RobotController.getBatteryVoltage());
             });
     m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
+  public double[] getRobotPosition() {
+    double x = getState().Pose.getX();
+    double y = getState().Pose.getY();
+    double theta = getState().Pose.getRotation().getDegrees();
+
+    double[] array = {x, y, theta};
+    return array;
+  }
+
+  public double[] getEncoderPositions() {
+    double frontRightVal = frontRightCancoder.getAbsolutePosition().getValueAsDouble();
+    double frontLeftVal = frontLeftCancoder.getAbsolutePosition().getValueAsDouble();
+    double backRightVal = backRightCancoder.getAbsolutePosition().getValueAsDouble();
+    double backLeftVal = backLeftCancoder.getAbsolutePosition().getValueAsDouble();
+
+    double[] array = {frontRightVal, frontLeftVal, backRightVal, backLeftVal};
+    return array;
   }
 }

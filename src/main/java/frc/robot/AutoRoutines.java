@@ -13,7 +13,7 @@ public class AutoRoutines {
 
   public AutoRoutine testAuto1() {
     final AutoRoutine routine = m_factory.newRoutine("Test Auto 1");
-    final AutoTrajectory testTraj = routine.trajectory("LeftHP_ReefFront");
+    final AutoTrajectory testTraj = routine.trajectory("TestForward");
 
     routine.active().onTrue(testTraj.resetOdometry().andThen(testTraj.cmd()));
     return routine;
