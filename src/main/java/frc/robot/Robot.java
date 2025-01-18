@@ -21,6 +21,10 @@ public class Robot extends TimedRobot {
   DoublePublisher yPub;
   BooleanPublisher exampleSensorPub;
 
+  double x = 0;
+  double y = 0;
+  boolean exampleSensor = false;
+
   private final RobotContainer m_robotContainer;
 
   public Robot() {
@@ -40,10 +44,6 @@ public class Robot extends TimedRobot {
     yPub = table.getDoubleTopic("y").publish();
     exampleSensorPub = table.getBooleanTopic("exampleSensor").publish();
   }
-
-  double x = 0;
-  double y = 0;
-  boolean exampleSensor = false;
 
   @Override
   public void robotInit() {
