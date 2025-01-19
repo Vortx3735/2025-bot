@@ -74,7 +74,8 @@ public class TunerConstants {
   private static final Pigeon2Configuration pigeonConfigs = null;
 
   // CAN bus that the devices are located on;
-  // All swerve devices must share the same CAN bus
+  //
+  // All swerve devices must share the same CAN bus//
   public static final CANBus kCANBus = new CANBus("", "./logs/example.hoot");
 
   // Theoretical free speed (m/s) at 12 V applied output;
