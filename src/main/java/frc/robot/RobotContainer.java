@@ -14,8 +14,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
 
 public class RobotContainer {
@@ -74,14 +74,24 @@ public class RobotContainer {
         // Drivetrain will execute thigradlew.bat :spotlessApplys command periodically
         drivetrain.applyRequest(
             () ->
-                drive
-                    .withVelocityX(
-                        -joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(
-                        -joystick.getRightX()
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                joystick.rightBumper().getAsBoolean() == true
+                    ? // if right bumper is pressed then reduce speed of robot
+                    drive // coefficients can be changed to driver preferences
+                        .withVelocityX(
+                            -joystick.getLeftY() * MaxSpeed / 4) // divide drive speed by 4
+                        .withVelocityY(
+                            -joystick.getLeftX() * MaxSpeed / 4) // divide drive speed by 4
+                        .withRotationalRate(
+                            -joystick.getRightX() * MaxAngularRate / 3) // divide turn sppeed by 3
+                    : drive
+                        .withVelocityX(
+                            -joystick.getLeftY()
+                                * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(
+                            -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(
+                            -joystick.getRightX()
+                                * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -102,7 +112,6 @@ public class RobotContainer {
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
