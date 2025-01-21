@@ -14,17 +14,16 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 public class Telemetry {
   private final double MaxSpeed;
-  public Dictionary<String,DoublePublisher> pubList = new Hashtable<>();
   /**
    * Construct a telemetry object, with the specified max speed of the robot
    *
@@ -139,8 +138,9 @@ public class Telemetry {
 
       SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
     }
+  
   }
-  public void newDoublePublisher(String name){
+/*  public void newDoublePublisher(String name){
     DoublePublisher temp;
     temp = table.getDoubleTopic(name).publish();
     pubList.put(name,temp);
@@ -163,5 +163,28 @@ public class Telemetry {
     pubList.get("flCancoder").set(encoderPos[1]);
     pubList.get("brCancoder").set(encoderPos[2]);
     pubList.get("blCancoder").set(encoderPos[3]);
+  } */
+
+  public void initSwerveTable(SwerveDriveState state){
+    SmartDashboard.putData("Swerve Drive", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("SwerveDrive");
+    
+        builder.addDoubleProperty("Front Left Angle", () -> state.ModuleStates[0].angle.getRadians(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> state.ModuleStates[0].speedMetersPerSecond, null);
+    
+        builder.addDoubleProperty("Front Right Angle", () -> state.ModuleStates[1].angle.getRadians(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> state.ModuleStates[1].speedMetersPerSecond, null);
+    
+        builder.addDoubleProperty("Back Left Angle", () -> state.ModuleStates[2].angle.getRadians(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> state.ModuleStates[2].speedMetersPerSecond, null);
+    
+        builder.addDoubleProperty("Back Right Angle", () -> state.ModuleStates[3].angle.getRadians(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> state.ModuleStates[3].speedMetersPerSecond, null);
+    
+        builder.addDoubleProperty("Robot Angle", () -> state.Pose.getRotation().getRadians() - 3.14159, null);
+      }
+    });
   }
 }
