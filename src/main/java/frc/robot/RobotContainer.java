@@ -38,7 +38,9 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private final VorTXControllerXbox joystick = new VorTXControllerXbox(0);
+  private final VorTXControllerXbox driver = new VorTXControllerXbox(0);
+
+  private final VorTXControllerXbox control = new VorTXControllerXbox(1);
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -78,44 +80,44 @@ public class RobotContainer {
         // Drivetrain will execute thigradlew.bat :spotlessApplys command periodically
         drivetrain.applyRequest(
             () ->
-                joystick.rightBumper().getAsBoolean() == true
+                driver.rightBumper().getAsBoolean() == true
                     ? // if right bumper is pressed then reduce speed of robot
                     drive // coefficients can be changed to driver preferences
                         .withVelocityX(
-                            -joystick.getLeftY() * MaxSpeed / 4) // divide drive speed by 4
+                            -driver.getLeftY() * MaxSpeed / 4) // divide drive speed by 4
                         .withVelocityY(
-                            -joystick.getLeftX() * MaxSpeed / 4) // divide drive speed by 4
+                            -driver.getLeftX() * MaxSpeed / 4) // divide drive speed by 4
                         .withRotationalRate(
-                            -joystick.getRightX() * MaxAngularRate / 3) // divide turn sppeed by 3
+                            -driver.getRightX() * MaxAngularRate / 3) // divide turn sppeed by 3
                     : drive
                         .withVelocityX(
-                            -joystick.getLeftY()
+                            -driver.getLeftY()
                                 * MaxSpeed) // Drive forward with negative Y (forward)
                         .withVelocityY(
-                            -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                            -driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                         .withRotationalRate(
-                            -joystick.getRightX()
+                            -driver.getRightX()
                                 * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick
+    driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    driver
         .b()
         .whileTrue(
             drivetrain.applyRequest(
                 () ->
                     point.withModuleDirection(
-                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+                        new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
