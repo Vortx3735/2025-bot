@@ -2,11 +2,11 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -19,21 +19,12 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 public class Telemetry {
-  DoublePublisher xPub;
-  DoublePublisher yPub;
-  DoublePublisher anglePub;
-  DoublePublisher frontRightCancoderPub;
-  DoublePublisher frontLeftCancoderPub;
-  DoublePublisher backRightCancoderPub;
-  DoublePublisher backLeftCancoderPub;
-
-  BooleanPublisher exampleSensorPub;
-
-  boolean exampleSensor = false;
   private final double MaxSpeed;
-
+  public Dictionary<String,DoublePublisher> pubList = new Hashtable<>();
   /**
    * Construct a telemetry object, with the specified max speed of the robot
    *
@@ -43,10 +34,9 @@ public class Telemetry {
     MaxSpeed = maxSpeed;
     SignalLogger.start();
   }
-
+  
   /* What to publish over networktables for telemetry */
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
   /* Robot swerve drive state */
   private final NetworkTable driveStateTable = inst.getTable("DriveState");
   private final StructPublisher<Pose2d> drivePose =
@@ -121,7 +111,6 @@ public class Telemetry {
     driveModulePositions.set(state.ModulePositions);
     driveTimestamp.set(state.Timestamp);
     driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
-
     /* Also write to log file */
     m_poseArray[0] = state.Pose.getX();
     m_poseArray[1] = state.Pose.getY();
@@ -151,37 +140,28 @@ public class Telemetry {
       SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
     }
   }
-
-  public void configureNetworkTables() {
-    // Get the default instance of NetworkTables that was created automatically
-    // when the robot program starts
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    // Get the table within that instance that contains the data. There can
-    // be as many tables as you like and exist to make it easier to organize
-    // your data. In this case, it's a table called datatable.
-    NetworkTable table = inst.getTable("positionTable");
-    // Start publishing topics within that table that correspond to the X and Y values
-    // for some operation in your program.
-    // The topic names are actually "/datatable/x" and "/datatable/y".
-    xPub = table.getDoubleTopic("x").publish();
-    yPub = table.getDoubleTopic("y").publish();
-    anglePub = table.getDoubleTopic("robotAngle").publish();
-    frontRightCancoderPub = table.getDoubleTopic("frontRightCancoder").publish();
-    frontLeftCancoderPub = table.getDoubleTopic("frontLeftCancoder").publish();
-    backRightCancoderPub = table.getDoubleTopic("backRightCancoderPub").publish();
-    backLeftCancoderPub = table.getDoubleTopic("backLeftCancoderPub").publish();
-    exampleSensorPub = table.getBooleanTopic("exampleSensor").publish();
+  public void newDoublePublisher(String name){
+    DoublePublisher temp;
+    temp = table.getDoubleTopic(name).publish();
+    pubList.put(name,temp);
+  }
+  public void configureNetworkTables(){  
+    newDoublePublisher("robotX");
+    newDoublePublisher("robotY");
+    newDoublePublisher("robotAngle");
+    newDoublePublisher("frCancoder");
+    newDoublePublisher("flCancoder");
+    newDoublePublisher("brCancoder");
+    newDoublePublisher("blCancoder");
   }
 
-  public void updateNetworkTables(double[] robotPos, double[] encoderPos) {
-    xPub.set(robotPos[0]);
-    yPub.set(robotPos[1]);
-    anglePub.set(robotPos[2]);
-    frontRightCancoderPub.set(encoderPos[0]);
-    frontLeftCancoderPub.set(encoderPos[1]);
-    backRightCancoderPub.set(encoderPos[2]);
-    backLeftCancoderPub.set(encoderPos[3]);
-    exampleSensorPub.set(exampleSensor);
-    exampleSensor = !exampleSensor;
+  public void updateDrivetrainNetworkTables(double[] robotPos, double[] encoderPos) {
+    pubList.get("robotX").set(robotPos[0]);
+    pubList.get("robotY").set(robotPos[1]);
+    pubList.get("robotAngle").set(robotPos[2]);
+    pubList.get("frCancoder").set(encoderPos[0]);
+    pubList.get("flCancoder").set(encoderPos[1]);
+    pubList.get("brCancoder").set(encoderPos[2]);
+    pubList.get("blCancoder").set(encoderPos[3]);
   }
 }

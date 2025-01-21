@@ -64,7 +64,7 @@ public class RobotContainer {
   public void updateNetworkTables() {
     double[] robotPos = drivetrain.getRobotPosition();
     double[] encoderPos = drivetrain.getEncoderPositions();
-    logger.updateNetworkTables(robotPos, encoderPos);
+    logger.updateDrivetrainNetworkTables(robotPos, encoderPos);
   }
 
   private void configureBindings() {
