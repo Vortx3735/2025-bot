@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AutoAlignCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
@@ -49,7 +50,7 @@ public class RobotContainer {
   private final AutoRoutines autoRoutines;
   private final AutoChooser autoChooser = new AutoChooser();
 
-  // PhotonVision Intake Camera Intialization
+  // PhotonVision Intake Camera Intialization... MAKE SURE THIS IS NAMED 'intakeCamera' in PhotonVision
   private final PhotonCamera intake = new PhotonCamera("intakeCamera");
 
   public RobotContainer() {
@@ -119,6 +120,10 @@ public class RobotContainer {
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    // auto align w apriltag
+
+    driver.x().whileTrue(new AutoAlignCommand(drivetrain, intake));
   }
 
   public Command getAutonomousCommand() {
