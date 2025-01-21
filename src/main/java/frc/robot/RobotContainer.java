@@ -58,13 +58,15 @@ public class RobotContainer {
   }
 
   private void configureNetworkTables() {
-    logger.configureNetworkTables();
+    // logger.configureNetworkTables();
+    logger.initSwerveTable(drivetrain.getState());
   }
 
   public void updateNetworkTables() {
-    double[] robotPos = drivetrain.getRobotPosition();
+    /*double[] robotPos = drivetrain.getRobotPosition();
     double[] encoderPos = drivetrain.getEncoderPositions();
-    logger.updateNetworkTables(robotPos, encoderPos);
+    logger.updateDrivetrainNetworkTables(robotPos, encoderPos); */
+    drivetrain.registerTelemetry(logger::telemeterize);
   }
 
   private void configureBindings() {
@@ -112,7 +114,6 @@ public class RobotContainer {
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-    drivetrain.registerTelemetry(logger::telemeterize);
   }
 
   public Command getAutonomousCommand() {
