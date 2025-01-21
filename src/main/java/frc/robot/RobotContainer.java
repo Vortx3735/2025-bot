@@ -58,7 +58,7 @@ public class RobotContainer {
   }
 
   private void configureNetworkTables() {
-    //logger.configureNetworkTables();
+    // logger.configureNetworkTables();
     logger.initSwerveTable(drivetrain.getState());
   }
 

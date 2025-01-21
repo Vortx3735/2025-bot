@@ -2,7 +2,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -24,6 +23,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class Telemetry {
   private final double MaxSpeed;
+
   /**
    * Construct a telemetry object, with the specified max speed of the robot
    *
@@ -33,7 +33,7 @@ public class Telemetry {
     MaxSpeed = maxSpeed;
     SignalLogger.start();
   }
-  
+
   /* What to publish over networktables for telemetry */
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   /* Robot swerve drive state */
@@ -52,6 +52,8 @@ public class Telemetry {
       driveStateTable.getDoubleTopic("Timestamp").publish();
   private final DoublePublisher driveOdometryFrequency =
       driveStateTable.getDoubleTopic("OdometryFrequency").publish();
+  private final DoublePublisher robotX = driveStateTable.getDoubleTopic("RobotX").publish();
+  private final DoublePublisher robotY = driveStateTable.getDoubleTopic("RobotY").publish();
 
   /* Robot pose for field positioning */
   private final NetworkTable table = inst.getTable("Pose");
@@ -110,6 +112,9 @@ public class Telemetry {
     driveModulePositions.set(state.ModulePositions);
     driveTimestamp.set(state.Timestamp);
     driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
+    robotX.set(state.Pose.getX());
+    robotY.set(state.Pose.getY());
+
     /* Also write to log file */
     m_poseArray[0] = state.Pose.getX();
     m_poseArray[1] = state.Pose.getY();
@@ -138,14 +143,14 @@ public class Telemetry {
 
       SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
     }
-  
   }
-/*  public void newDoublePublisher(String name){
+
+  /*  public void newDoublePublisher(String name){
     DoublePublisher temp;
     temp = table.getDoubleTopic(name).publish();
     pubList.put(name,temp);
   }
-  public void configureNetworkTables(){  
+  public void configureNetworkTables(){
     newDoublePublisher("robotX");
     newDoublePublisher("robotY");
     newDoublePublisher("robotAngle");
@@ -165,26 +170,37 @@ public class Telemetry {
     pubList.get("blCancoder").set(encoderPos[3]);
   } */
 
-  public void initSwerveTable(SwerveDriveState state){
-    SmartDashboard.putData("Swerve Drive", new Sendable() {
-      @Override
-      public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("SwerveDrive");
-    
-        builder.addDoubleProperty("Front Left Angle", () -> state.ModuleStates[0].angle.getRadians(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> state.ModuleStates[0].speedMetersPerSecond, null);
-    
-        builder.addDoubleProperty("Front Right Angle", () -> state.ModuleStates[1].angle.getRadians(), null);
-        builder.addDoubleProperty("Front Right Velocity", () -> state.ModuleStates[1].speedMetersPerSecond, null);
-    
-        builder.addDoubleProperty("Back Left Angle", () -> state.ModuleStates[2].angle.getRadians(), null);
-        builder.addDoubleProperty("Back Left Velocity", () -> state.ModuleStates[2].speedMetersPerSecond, null);
-    
-        builder.addDoubleProperty("Back Right Angle", () -> state.ModuleStates[3].angle.getRadians(), null);
-        builder.addDoubleProperty("Back Right Velocity", () -> state.ModuleStates[3].speedMetersPerSecond, null);
-    
-        builder.addDoubleProperty("Robot Angle", () -> state.Pose.getRotation().getRadians() - 3.14159, null);
-      }
-    });
+  public void initSwerveTable(SwerveDriveState state) {
+    SmartDashboard.putData(
+        "Swerve Drive",
+        new Sendable() {
+          @Override
+          public void initSendable(SendableBuilder builder) {
+            builder.setSmartDashboardType("SwerveDrive");
+
+            builder.addDoubleProperty(
+                "Front Left Angle", () -> state.ModuleStates[0].angle.getDegrees() % 360, null);
+            builder.addDoubleProperty(
+                "Front Left Velocity", () -> state.ModuleStates[0].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty(
+                "Front Right Angle", () -> state.ModuleStates[1].angle.getDegrees() % 360, null);
+            builder.addDoubleProperty(
+                "Front Right Velocity", () -> state.ModuleStates[1].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty(
+                "Back Left Angle", () -> state.ModuleStates[2].angle.getDegrees() % 360, null);
+            builder.addDoubleProperty(
+                "Back Left Velocity", () -> state.ModuleStates[2].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty(
+                "Back Right Angle", () -> state.ModuleStates[3].angle.getDegrees() % 360, null);
+            builder.addDoubleProperty(
+                "Back Right Velocity", () -> state.ModuleStates[3].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty(
+                "Robot Angle", () -> state.Pose.getRotation().getDegrees() + 180, null);
+          }
+        });
   }
 }
