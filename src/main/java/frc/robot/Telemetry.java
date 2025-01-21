@@ -55,8 +55,6 @@ public class Telemetry {
       driveStateTable.getDoubleTopic("OdometryFrequency").publish();
   private final DoublePublisher robotX = driveStateTable.getDoubleTopic("RobotX").publish();
   private final DoublePublisher robotY = driveStateTable.getDoubleTopic("RobotY").publish();
-  private final BooleanPublisher moduleRotationsAligned =
-      driveStateTable.getBooleanTopic("moduleRotationsAligned").publish();
 
   /* Robot pose for field positioning */
   private final NetworkTable table = inst.getTable("Pose");
@@ -117,13 +115,6 @@ public class Telemetry {
     driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
     robotX.set(state.Pose.getX());
     robotY.set(state.Pose.getY());
-    moduleRotationsAligned.set(
-        state.ModuleStates[0].angle.getRadians() % 360
-                == state.ModuleStates[1].angle.getRadians() % 360
-            && state.ModuleStates[2].angle.getRadians() % 360
-                == state.ModuleStates[3].angle.getRadians() % 360
-            && state.ModuleStates[0].angle.getRadians() % 360
-                == state.ModuleStates[2].angle.getRadians());
     /* Also write to log file */
     m_poseArray[0] = state.Pose.getX();
     m_poseArray[1] = state.Pose.getY();
