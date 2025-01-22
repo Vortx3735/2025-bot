@@ -1,9 +1,9 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimbSubsystem;
 
-public class ClimbCommand extends CommandBase {
+public class ClimbCommand extends Command {
   private final ClimbSubsystem climbSubsystem;
   private final Operation operation;
 
