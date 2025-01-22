@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class CoralIntake extends SubsystemBase {
 
   // Right side coral instake
-  static SparkMax coralInMotor1;
+  public static SparkMax coralInMotor1;
   static SparkMax coralWrist1;
 
   // Left side coral intake
