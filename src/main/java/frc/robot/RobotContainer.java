@@ -5,16 +5,19 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
-
+import frc.robot.commands.ClimbCommand;
+import frc.robot.subsystems.ClimbSubsystem;
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.util.TunerConstants;
+import frc.robot.util.VorTXControllerXbox;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -35,29 +38,61 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private final CommandXboxController joystick = new CommandXboxController(0);
+  private final VorTXControllerXbox joystick = new VorTXControllerXbox(0);
 
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+  /* Path follower */
+  private final AutoFactory autoFactory;
+  private final AutoRoutines autoRoutines;
+  private final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
+    autoFactory = drivetrain.createAutoFactory();
+    autoRoutines = new AutoRoutines(autoFactory);
+
+    autoChooser.addRoutine("Test Auto 1", autoRoutines::testAuto1);
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     configureBindings();
+    configureNetworkTables();
+  }
+
+  private void configureNetworkTables() {
+    logger.configureNetworkTables();
+  }
+
+  public void updateNetworkTables() {
+    double[] robotPos = drivetrain.getRobotPosition();
+    double[] encoderPos = drivetrain.getEncoderPositions();
+    logger.updateNetworkTables(robotPos, encoderPos);
   }
 
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
+        // Drivetrain will execute thigradlew.bat :spotlessApplys command periodically
         drivetrain.applyRequest(
             () ->
-                drive
-                    .withVelocityX(
-                        -joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(
-                        -joystick.getRightX()
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                joystick.rightBumper().getAsBoolean() == true
+                    ? // if right bumper is pressed then reduce speed of robot
+                    drive // coefficients can be changed to driver preferences
+                        .withVelocityX(
+                            -joystick.getLeftY() * MaxSpeed / 4) // divide drive speed by 4
+                        .withVelocityY(
+                            -joystick.getLeftX() * MaxSpeed / 4) // divide drive speed by 4
+                        .withRotationalRate(
+                            -joystick.getRightX() * MaxAngularRate / 3) // divide turn sppeed by 3
+                    : drive
+                        .withVelocityX(
+                            -joystick.getLeftY()
+                                * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(
+                            -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(
+                            -joystick.getRightX()
+                                * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -78,11 +113,10 @@ public class RobotContainer {
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoChooser.selectedCommand();
   }
 }

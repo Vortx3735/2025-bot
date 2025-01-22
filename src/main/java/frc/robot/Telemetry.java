@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -20,6 +21,17 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class Telemetry {
+  DoublePublisher xPub;
+  DoublePublisher yPub;
+  DoublePublisher anglePub;
+  DoublePublisher frontRightCancoderPub;
+  DoublePublisher frontLeftCancoderPub;
+  DoublePublisher backRightCancoderPub;
+  DoublePublisher backLeftCancoderPub;
+
+  BooleanPublisher exampleSensorPub;
+
+  boolean exampleSensor = false;
   private final double MaxSpeed;
 
   /**
@@ -139,4 +151,39 @@ public class Telemetry {
       SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
     }
   }
+
+  public void configureNetworkTables() {
+    // Get the default instance of NetworkTables that was created automatically
+    // when the robot program starts
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    // Get the table within that instance that contains the data. There can
+    // be as many tables as you like and exist to make it easier to organize
+    // your data. In this case, it's a table called datatable.
+    NetworkTable table = inst.getTable("positionTable");
+    // Start publishing topics within that table that correspond to the X and Y values
+    // for some operation in your program.
+    // The topic names are actually "/datatable/x" and "/datatable/y".
+    xPub = table.getDoubleTopic("x").publish();
+    yPub = table.getDoubleTopic("y").publish();
+    anglePub = table.getDoubleTopic("robotAngle").publish();
+    frontRightCancoderPub = table.getDoubleTopic("frontRightCancoder").publish();
+    frontLeftCancoderPub = table.getDoubleTopic("frontLeftCancoder").publish();
+    backRightCancoderPub = table.getDoubleTopic("backRightCancoderPub").publish();
+    backLeftCancoderPub = table.getDoubleTopic("backLeftCancoderPub").publish();
+    exampleSensorPub = table.getBooleanTopic("exampleSensor").publish();
+  }
+
+  public void updateNetworkTables(double[] robotPos, double[] encoderPos) {
+    xPub.set(robotPos[0]);
+    yPub.set(robotPos[1]);
+    anglePub.set(robotPos[2]);
+    frontRightCancoderPub.set(encoderPos[0]);
+    frontLeftCancoderPub.set(encoderPos[1]);
+    backRightCancoderPub.set(encoderPos[2]);
+    backLeftCancoderPub.set(encoderPos[3]);
+    exampleSensorPub.set(exampleSensor);
+    exampleSensor = !exampleSensor;
+  }
 }
+
+
