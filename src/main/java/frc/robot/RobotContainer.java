@@ -5,6 +5,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import choreo.auto.AutoChooser;
@@ -13,9 +16,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.util.TunerConstants;
+import frc.robot.util.VorTXControllerXbox;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
 
@@ -41,13 +47,26 @@ public class RobotContainer {
   private final VorTXControllerXbox joystick = new VorTXControllerXbox(0);
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final VorTXControllerXbox joystick = new VorTXControllerXbox(0);
 
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+  /* Path follower */
+  private final AutoFactory autoFactory;
+  private final AutoRoutines autoRoutines;
+  private final AutoChooser autoChooser = new AutoChooser();
   /* Path follower */
   private final AutoFactory autoFactory;
   private final AutoRoutines autoRoutines;
   private final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
+    autoFactory = drivetrain.createAutoFactory();
+    autoRoutines = new AutoRoutines(autoFactory);
+
+    autoChooser.addRoutine("Test Auto 1", autoRoutines::testAuto1);
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
@@ -66,6 +85,17 @@ public class RobotContainer {
     double[] robotPos = drivetrain.getRobotPosition();
     double[] encoderPos = drivetrain.getEncoderPositions();
     logger.updateNetworkTables(robotPos, encoderPos);
+    configureNetworkTables();
+  }
+
+  private void configureNetworkTables() {
+    logger.configureNetworkTables();
+  }
+
+  public void updateNetworkTables() {
+    double[] robotPos = drivetrain.getRobotPosition();
+    double[] encoderPos = drivetrain.getEncoderPositions();
+    logger.updateNetworkTables(robotPos, encoderPos);
   }
 
   private void configureBindings() {
@@ -73,8 +103,27 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute thigradlew.bat :spotlessApplys command periodically
+        // Drivetrain will execute thigradlew.bat :spotlessApplys command periodically
         drivetrain.applyRequest(
             () ->
+                joystick.rightBumper().getAsBoolean() == true
+                    ? // if right bumper is pressed then reduce speed of robot
+                    drive // coefficients can be changed to driver preferences
+                        .withVelocityX(
+                            -joystick.getLeftY() * MaxSpeed / 4) // divide drive speed by 4
+                        .withVelocityY(
+                            -joystick.getLeftX() * MaxSpeed / 4) // divide drive speed by 4
+                        .withRotationalRate(
+                            -joystick.getRightX() * MaxAngularRate / 3) // divide turn sppeed by 3
+                    : drive
+                        .withVelocityX(
+                            -joystick.getLeftY()
+                                * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(
+                            -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(
+                            -joystick.getRightX()
+                                * MaxAngularRate) // Drive counterclockwise with negative X (left)
                 joystick.rightBumper().getAsBoolean() == true
                     ? // if right bumper is pressed then reduce speed of robot
                     drive // coefficients can be changed to driver preferences
@@ -117,6 +166,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
+    return autoChooser.selectedCommand();
     return autoChooser.selectedCommand();
   }
 }
