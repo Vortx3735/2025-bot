@@ -17,6 +17,14 @@ public class CoralIntakeCommand extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
+  public void intake() {
+    m_CoralIntake.move(-1);
+  }
+
+  public void outtake() {
+    m_CoralIntake.move(1);
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
@@ -27,7 +35,9 @@ public class CoralIntakeCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_CoralIntake.stopIntake();
+  }
 
   // Returns true when the command should end.
   @Override
