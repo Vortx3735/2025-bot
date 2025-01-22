@@ -1,4 +1,4 @@
-package frc.robot.generated;
+package frc.robot.util;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -79,7 +79,7 @@ public class TunerConstants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.73);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(3.5);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
@@ -136,7 +136,7 @@ public class TunerConstants {
   // Front Left
   private static final int kFrontLeftDriveMotorId = 3;
   private static final int kFrontLeftSteerMotorId = 4;
-  private static final int kFrontLeftEncoderId = 20;
+  private static final int kFrontLeftEncoderId = 16;
   private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.356689453125);
   private static final boolean kFrontLeftSteerMotorInverted = true;
   private static final boolean kFrontLeftEncoderInverted = false;
@@ -158,7 +158,7 @@ public class TunerConstants {
   // Back Left
   private static final int kBackLeftDriveMotorId = 8;
   private static final int kBackLeftSteerMotorId = 7;
-  private static final int kBackLeftEncoderId = 16;
+  private static final int kBackLeftEncoderId = 18;
   private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.146728515625);
   private static final boolean kBackLeftSteerMotorInverted = true;
   private static final boolean kBackLeftEncoderInverted = false;
