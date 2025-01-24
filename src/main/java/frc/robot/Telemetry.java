@@ -19,8 +19,10 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.subsystems.ClimbSubsystem;
 
 public class Telemetry {
+
   DoublePublisher xPub;
   DoublePublisher yPub;
   DoublePublisher anglePub;
@@ -28,6 +30,10 @@ public class Telemetry {
   DoublePublisher frontLeftCancoderPub;
   DoublePublisher backRightCancoderPub;
   DoublePublisher backLeftCancoderPub;
+  // should puublish ClimbSystem data on elastic... I hope
+  private final DoublePublisher motorSpeedPub;
+  private final DoublePublisher positionPub;
+  private final DoublePublisher velocityPub;
 
   BooleanPublisher exampleSensorPub;
 
@@ -42,11 +48,15 @@ public class Telemetry {
   public Telemetry(double maxSpeed) {
     MaxSpeed = maxSpeed;
     SignalLogger.start();
+    NetworkTable climbTable = NetworkTableInstance.getDefault().getTable("Climbsubsystem");
+    motorSpeedPub = climbTable.getDoubleTopic("motorSpeed").publish();
+    positionPub = climbTable.getDoubleTopic("position").publish();
+    velocityPub = climbTable.getDoubleTopic("velocity").publish();
   }
 
   /* What to publish over networktables for telemetry */
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
+  private final NetworkTable climbTable = inst.getTable("Climbsubsystem");
   /* Robot swerve drive state */
   private final NetworkTable driveStateTable = inst.getTable("DriveState");
   private final StructPublisher<Pose2d> drivePose =
@@ -183,5 +193,17 @@ public class Telemetry {
     backLeftCancoderPub.set(encoderPos[3]);
     exampleSensorPub.set(exampleSensor);
     exampleSensor = !exampleSensor;
+  }
+
+  public void updateClimbTelemetry(ClimbSubsystem climbSubsystem) {
+    motorSpeedPub.set(climbSubsystem.getMotorSpeed());
+    positionPub.set(climbSubsystem.getPosition());
+    velocityPub.set(climbSubsystem.getVelocity());
+  }
+
+  public void stopPublishing() {
+    motorSpeedPub.close();
+    positionPub.close();
+    velocityPub.close();
   }
 }

@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Telemetry;
 public class ClimbSubsystem extends SubsystemBase {
   private final SparkMax climbMotor;
   private final RelativeEncoder encoder;
@@ -54,4 +56,6 @@ public class ClimbSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Climb Position", getPosition());
     SmartDashboard.putNumber("Climb Velocity", getVelocity());
   }
+  
 }
+

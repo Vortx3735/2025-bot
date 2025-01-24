@@ -21,7 +21,7 @@ public class ClimbCommand extends Command {
   }
 
   @Override
-  public void initialize() {
+  public void initialize(){
     switch (operation) {
       case GRAB:
         climbSubsystem.grab();
@@ -37,14 +37,17 @@ public class ClimbCommand extends Command {
         break;
     }
   }
-
+ 
+ 
+ 
+  
   @Override
   public void end(boolean interrupted) {
     climbSubsystem.stop();
   }
 
   @Override
-  public boolean isFinished() {
+  public boolean isFinished(){
     return false; // Adjust logic if needed for ending
   }
 }
