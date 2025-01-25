@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,75 +10,93 @@ import com.ctre.phoenix6.controls.jni.ControlJNI;
 import com.ctre.phoenix6.configs.CANcoderConfigurator;
 import edu.wpi.first.math.controller.PIDController;
 
+
 public class Elevator extends SubsystemBase {
-    private final TalonFX elevatorMotor;
-    private final CANcoder elevatorEncoder;
+    private static TalonFX elevatorMotor1 = new TalonFX(1);
+  private static TalonFX elevatorMotor2 = new TalonFX(2);
+  private static CANcoder elevatorEncoder1 = new CANcoder(1);
+  private static CANcoder elevatorEncoder2 = new CANcoder(2);
+  private static PIDController elevatorPID = new PIDController(0.1, 0.1, 0.1);
+    // in init function
+    var talonFXConfigs = new TalonFXConfiguration();
 
-    // Kraken motors placeholder (adjust based on functionality)
-    private final Object krakenMotors;
+    // set slot 0 gains
+    var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
+    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
 
-    // PID Constants
-    private static final double kP = 0.1;
-    private static final double kI = 0.0;
-    private static final double kD = 0.0;
+    // set Motion Magic settings
+    var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
-    // Encoder limits for the elevator
-    private static final double MAX_HEIGHT = 100.0; // Maximum encoder value for height
-    private static final double MIN_HEIGHT = 0.0;   // Minimum encoder value for height
+    // create a Motion Magic request, voltage output
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
-    public Elevator(int motorCANID, int encoderCANID, Object krakenMotorsInstance) {
-        // Initialize motor and encoder
-        elevatorMotor = new TalonFX(motorCANID);
-        elevatorEncoder = new CANcoder(encoderCANID);
-
-        // Configure PID settings on the motor
-        // Assign Kraken motors instance
-        this.krakenMotors = krakenMotorsInstance;
-
-        // Initialize encoder settings
-    }
-
-    /**
-     * Manually control the elevator motor with a percentage output.
-     *
-     * @param speed The speed to set the motor (-1.0 to 1.0).
-     */
-    public void manualControl(double speed) {
-        // Prevent movement beyond soft limits
-        double currentHeight = getElevatorHeight();
-        if ((speed > 0 && currentHeight >= MAX_HEIGHT) || (speed < 0 && currentHeight <= MIN_HEIGHT)) {
-            elevatorMotor.set(0.0);
-        } else {
-            elevatorMotor.set(speed);
-        }
-    }
-
-    /**
-     * Move the elevator to a target height using position control.
-     *
-     * @param targetHeight The target height in encoder units.
-     */
-    public void moveToHeight(double targetHeight) {
-        // Clamp target height within limits
-        targetHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, targetHeight));
-
-        // Set motor to position control mode
-       
-    }
+    // set target position to 100 rotations
+    m_talonFX.setControl(m_request.withPosition(100));
+    m_talonFX.getConfigurator().apply(talonFXConfigs);
+    public class Elevator {
     
+        public enum ElevatorLevel {
+            LEVEL1(0.0),
+            LEVEL2(1.0),
+            LEVEL3(2.0),
+            LEVEL4(3.0);
+    
+            private final double position;
+    
+            ElevatorLevel(double position) {
+                this.position = position;
+            }
+    
+            public double getPosition() {
+                return position;
+            }
+        }
+    
+        public void moveToElevatorLevel(ElevatorLevel level) {
+            double position = level.getPosition();
+            elevatorMotor1.getEncoder().setPosition(position);
+            elevatorMotor2.getEncoder().setPosition(position);
+        }
+    
+    }
+    elevator.moveToElevatorLevel(ElevatorLevel.LEVEL1);
+    elevator.moveToElevatorLevel(ElevatorLevel.LEVEL2);
+    elevator.moveToElevatorLevel(ElevatorLevel.LEVEL3);
+    elevator.moveToElevatorLevel(ElevatorLevel.LEVEL4);
 
-    /**
-     * Get the current elevator height from the encoder.
-     *
-     * @return The current height in encoder units.
-     */
-    public double getElevatorHeight() {
-        return elevatorEncoder.getPosition().getValueAsDouble();
+    public void setElevatorSpeed(double speed) {
+        elevatorMotor1.set(speed);
+        elevatorMotor2.set(speed);
+    }
+    public void moveElevatorUp() {
+        elevatorMotor1.set(1);
+        elevatorMotor2.set(1);
+    }
+    public void moveElevatorDown() {
+        elevatorMotor1.set(-1);
+        elevatorMotor2.set(-1);
+    }
+    public void moveElrvatorToPosition(double position) {
+        elevatorMotor1.set(ControlMode.Position, position);
+        elevatorMotor2.set(ControlMode.Position, position);
     }
 
-    @Override
-    public void periodic() {
-        // Called periodically by the scheduler, can be used for logging or updates
-        System.out.println("Elevator Height: " + getElevatorHeight());
+    public void stopElevator() {
+        elevatorMotor1.set(0);
+        elevatorMotor2.set(0);
+    }
+
+    public double getElevatorPosition() {
+        return elevatorMotor1.getEncoderPosition();
     }
 }
+    
+   
