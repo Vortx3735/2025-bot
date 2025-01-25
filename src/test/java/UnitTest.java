@@ -1,5 +1,3 @@
-package frc.robot.test.java;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.revrobotics.sim.SparkMaxSim;

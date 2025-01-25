@@ -30,9 +30,10 @@ public class Telemetry {
    *
    * @param maxSpeed Maximum speed in meters per second
    */
-  public Telemetry(double maxSpeed) {
+  public Telemetry(double maxSpeed,double maxAngularRate) {
     MaxSpeed = maxSpeed;
     maxSpeedEntry.setDouble(maxSpeed);
+    maxRotationEntry.setDouble(maxAngularRate);
     SignalLogger.start();
   }
 
@@ -57,6 +58,7 @@ public class Telemetry {
   private final DoublePublisher robotX = driveStateTable.getDoubleTopic("RobotX").publish();
   private final DoublePublisher robotY = driveStateTable.getDoubleTopic("RobotY").publish();
   private final NetworkTableEntry maxSpeedEntry = driveStateTable.getEntry("maxSpeed");
+  private final NetworkTableEntry maxRotationEntry = driveStateTable.getEntry("maxRotation");
 
   /* Robot pose for field positioning */
   private final NetworkTable table = inst.getTable("Pose");

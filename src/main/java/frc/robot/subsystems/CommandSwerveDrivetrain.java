@@ -322,8 +322,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return array;
   }
 
-  public double getMaxSpeed(){
-    double maxSpeed = NetworkTableInstance.getDefault().getTable("DriveState").getEntry("maxSpeed").getDouble(3.5);
+  public double getMaxSpeed() {
+    double maxSpeed =
+        NetworkTableInstance.getDefault()
+            .getTable("DriveState")
+            .getEntry("maxSpeed")
+            .getDouble(3.5);
+    return maxSpeed;
+  }
+  public double getMaxRotation() {
+    double maxSpeed =
+        NetworkTableInstance.getDefault()
+            .getTable("DriveState")
+            .getEntry("maxRotation")
+            .getDouble(3.14);
     return maxSpeed;
   }
 }
