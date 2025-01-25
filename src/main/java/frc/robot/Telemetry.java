@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -31,6 +32,7 @@ public class Telemetry {
    */
   public Telemetry(double maxSpeed) {
     MaxSpeed = maxSpeed;
+    maxSpeedEntry.setDouble(maxSpeed);
     SignalLogger.start();
   }
 
@@ -54,6 +56,7 @@ public class Telemetry {
       driveStateTable.getDoubleTopic("OdometryFrequency").publish();
   private final DoublePublisher robotX = driveStateTable.getDoubleTopic("RobotX").publish();
   private final DoublePublisher robotY = driveStateTable.getDoubleTopic("RobotY").publish();
+  private final NetworkTableEntry maxSpeedEntry = driveStateTable.getEntry("maxSpeed");
 
   /* Robot pose for field positioning */
   private final NetworkTable table = inst.getTable("Pose");
@@ -114,6 +117,7 @@ public class Telemetry {
     driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
     robotX.set(state.Pose.getX());
     robotY.set(state.Pose.getY());
+
     /* Also write to log file */
     m_poseArray[0] = state.Pose.getX();
     m_poseArray[1] = state.Pose.getY();

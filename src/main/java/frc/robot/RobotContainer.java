@@ -80,17 +80,17 @@ public class RobotContainer {
                     ? // if right bumper is pressed then reduce speed of robot
                     drive // coefficients can be changed to driver preferences
                         .withVelocityX(
-                            -joystick.getLeftY() * MaxSpeed / 4) // divide drive speed by 4
+                            -joystick.getLeftY() * drivetrain.getMaxSpeed() / 4) // divide drive speed by 4
                         .withVelocityY(
-                            -joystick.getLeftX() * MaxSpeed / 4) // divide drive speed by 4
+                            -joystick.getLeftX() * drivetrain.getMaxSpeed() / 4) // divide drive speed by 4
                         .withRotationalRate(
                             -joystick.getRightX() * MaxAngularRate / 3) // divide turn sppeed by 3
                     : drive
                         .withVelocityX(
                             -joystick.getLeftY()
-                                * MaxSpeed) // Drive forward with negative Y (forward)
+                                * drivetrain.getMaxSpeed()) // Drive forward with negative Y (forward)
                         .withVelocityY(
-                            -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                            -joystick.getLeftX() * drivetrain.getMaxSpeed()) // Drive left with negative X (left)
                         .withRotationalRate(
                             -joystick.getRightX()
                                 * MaxAngularRate) // Drive counterclockwise with negative X (left)
