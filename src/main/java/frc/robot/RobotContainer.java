@@ -51,7 +51,7 @@ public class RobotContainer {
   private final AutoChooser autoChooser = new AutoChooser();
 
   // PhotonVision Intake Camera Intialization... MAKE SURE THIS IS NAMED 'intakeCamera' in PhotonVision
-  private final PhotonCamera intake = new PhotonCamera("intakeCamera");
+  public final PhotonCamera intake = new PhotonCamera("intakeCamera");
 
   public RobotContainer() {
     autoFactory = drivetrain.createAutoFactory();
@@ -124,6 +124,7 @@ public class RobotContainer {
     // auto align w apriltag
 
     driver.x().whileTrue(new AutoAlignCommand(drivetrain, intake));
+
   }
 
   public Command getAutonomousCommand() {
