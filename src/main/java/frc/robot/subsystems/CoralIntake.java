@@ -78,12 +78,6 @@ public class CoralIntake extends SubsystemBase {
     coralWrist2.set(0);
   }
 
-  public void moveWristToPosition(double position) {
-    // move wrist to position
-    coralWrist1.getEncoder().setPosition(position);
-    coralWrist2.getEncoder().setPosition(position);
-  }
-
   public double getWristPosition() {
     // get wrist position
     return coralWrist1.getEncoder().getPosition();
