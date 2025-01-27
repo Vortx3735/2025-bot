@@ -35,7 +35,7 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  private final Telemetry logger = new Telemetry(MaxSpeed,MaxAngularRate);
+  private final Telemetry logger = new Telemetry(MaxSpeed, MaxAngularRate);
 
   private final VorTXControllerXbox joystick = new VorTXControllerXbox(0);
 
@@ -88,7 +88,9 @@ public class RobotContainer {
                                 * drivetrain.getMaxSpeed()
                                 / 4) // divide drive speed by 4
                         .withRotationalRate(
-                            -joystick.getRightX() * drivetrain.getMaxRotation() / 3) // divide turn sppeed by 3
+                            -joystick.getRightX()
+                                * drivetrain.getMaxRotation()
+                                / 3) // divide turn sppeed by 3
                     : drive
                         .withVelocityX(
                             -joystick.getLeftY()
@@ -99,7 +101,9 @@ public class RobotContainer {
                                 * drivetrain.getMaxSpeed()) // Drive left with negative X (left)
                         .withRotationalRate(
                             -joystick.getRightX()
-                                * drivetrain.getMaxRotation()) // Drive counterclockwise with negative X (left)
+                                * drivetrain
+                                    .getMaxRotation()) // Drive counterclockwise with negative X
+            // (left)
             ));
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));

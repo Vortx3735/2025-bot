@@ -30,7 +30,7 @@ public class Telemetry {
    *
    * @param maxSpeed Maximum speed in meters per second
    */
-  public Telemetry(double maxSpeed,double maxAngularRate) {
+  public Telemetry(double maxSpeed, double maxAngularRate) {
     MaxSpeed = maxSpeed;
     maxSpeedEntry.setDouble(maxSpeed);
     maxRotationEntry.setDouble(maxAngularRate);
