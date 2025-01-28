@@ -33,6 +33,8 @@ public class VorTXControllerXbox extends CommandXboxController {
       povLeft,
       povUpLeft;
 
+  private double deadzoneThreshold = 0.25; // 25% deadzone threshold for joystick input (adjust as needed)
+
   public VorTXControllerXbox(int port) {
     super(port);
 
@@ -57,6 +59,26 @@ public class VorTXControllerXbox extends CommandXboxController {
     povDownLeft = this.povDownLeft();
     povLeft = this.povLeft();
     povUpLeft = this.povUpLeft();
+  }
+
+
+
+  /**
+   * Applies a deadzone and scaling to the joystick input values.
+   *
+   * @param value The raw joystick input value.
+   * @return The adjusted value after applying the deadzone and scaling.
+   */
+  private double applyDeadzone(double value) {
+    double absValue = Math.abs(value);
+    if (absValue < deadzoneThreshold) {
+      return 0.0;
+    }
+    else {
+      return value;
+    }
+    
+
   }
 
   /**
@@ -124,19 +146,19 @@ public class VorTXControllerXbox extends CommandXboxController {
   }
 
   public double getTrueLeftX() {
-    return getHID().getLeftX();
+    return applyDeadzone(getHID().getLeftX());
   }
 
   public double getTrueLeftY() {
-    return getHID().getLeftY();
+    return applyDeadzone(getHID().getLeftY());
   }
 
   public double getTrueRightX() {
-    return getHID().getRightX();
+    return applyDeadzone(getHID().getRightX());
   }
 
   public double getTrueRightY() {
-    return getHID().getRightY();
+    return applyDeadzone(getHID().getRightY());
   }
 
   public void setRumble(RumbleType rumble, double intensity) {
