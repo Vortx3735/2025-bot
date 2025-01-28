@@ -8,7 +8,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -59,7 +58,7 @@ public class AlgaeIntake extends SubsystemBase {
 
     ka = 0.0;
     kg = 0.0;
-    ks   = 0.0;
+    ks = 0.0;
     kv = 0.0;
     wristFF = new ArmFeedforward(ks, kg, kv, ka);
 
@@ -94,8 +93,10 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWrist1.set(speed);
   }
 
-  public void moveWristToPosition(double p){
-    algaeWrist1.set(wristPID.calculate(position * 2 * Math.PI, p * 2 * Math.PI) + wristFF.calculate(p * 2 * Math.PI, kv));
+  public void moveWristToPosition(double p) {
+    algaeWrist1.set(
+        wristPID.calculate(position * 2 * Math.PI, p * 2 * Math.PI)
+            + wristFF.calculate(p * 2 * Math.PI, kv));
   }
 
   public void stopWrist() {
