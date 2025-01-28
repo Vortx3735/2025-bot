@@ -58,14 +58,10 @@ public class RobotContainer {
   }
 
   private void configureNetworkTables() {
-    // logger.configureNetworkTables();
     logger.initSwerveTable(drivetrain.getState());
   }
 
   public void updateNetworkTables() {
-    /*double[] robotPos = drivetrain.getRobotPosition();
-    double[] encoderPos = drivetrain.getEncoderPositions();
-    logger.updateDrivetrainNetworkTables(robotPos, encoderPos); */
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
@@ -73,7 +69,7 @@ public class RobotContainer {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
-        // Drivetrain will execute thigradlew.bat :spotlessApplys command periodically
+        // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
             () ->
                 joystick.rightBumper().getAsBoolean() == true

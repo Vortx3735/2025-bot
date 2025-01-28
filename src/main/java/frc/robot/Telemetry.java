@@ -150,31 +150,6 @@ public class Telemetry {
     }
   }
 
-  /*  public void newDoublePublisher(String name){
-    DoublePublisher temp;
-    temp = table.getDoubleTopic(name).publish();
-    pubList.put(name,temp);
-  }
-  public void configureNetworkTables(){
-    newDoublePublisher("robotX");
-    newDoublePublisher("robotY");
-    newDoublePublisher("robotAngle");
-    newDoublePublisher("frCancoder");
-    newDoublePublisher("flCancoder");
-    newDoublePublisher("brCancoder");
-    newDoublePublisher("blCancoder");
-  }
-
-  public void updateDrivetrainNetworkTables(double[] robotPos, double[] encoderPos) {
-    pubList.get("robotX").set(robotPos[0]);
-    pubList.get("robotY").set(robotPos[1]);
-    pubList.get("robotAngle").set(robotPos[2]);
-    pubList.get("frCancoder").set(encoderPos[0]);
-    pubList.get("flCancoder").set(encoderPos[1]);
-    pubList.get("brCancoder").set(encoderPos[2]);
-    pubList.get("blCancoder").set(encoderPos[3]);
-  } */
-
   public void initSwerveTable(SwerveDriveState state) {
     SmartDashboard.putData(
         "Swerve Drive",
