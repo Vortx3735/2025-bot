@@ -113,4 +113,7 @@ public class AlgaeIntake extends SubsystemBase {
     // reset wrist position
     algaeWrist1.getEncoder().setPosition(0);
   }
+  public void hold(){
+    algaeWrist1.set(wristPID.calculate(position * 2 * Math.PI, (int)position * 2 * Math.PI) + wristFF.calculate(position * 2 * Math.PI, kv));
+  }
 }
