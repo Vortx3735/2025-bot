@@ -8,9 +8,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeIntake extends SubsystemBase {
 
@@ -42,7 +43,6 @@ public class AlgaeIntake extends SubsystemBase {
 
     // set up PID
     algaeWrist1 = new SparkMax(wrist1id, MotorType.kBrushless);
-    algaeWrist2 = new SparkMax(wrist2id, MotorType.kBrushless);
     algaeWristConfig.inverted(true).idleMode(IdleMode.kBrake);
     algaeWristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     algaeWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
@@ -93,19 +93,15 @@ public class AlgaeIntake extends SubsystemBase {
   public void moveWrist(double speed) {
     // move wrist
     algaeWrist1.set(speed);
-    algaeWrist2.set(speed);
+  }
+
+  public void moveWristToPosition(double p){
+    algaeWrist1.set(wristPID.calculate(position * 2 * Math.PI, p * 2 * Math.PI) + wristFF.calculate(p * 2 * Math.PI, kv));
   }
 
   public void stopWrist() {
     // stop wrist
     algaeWrist1.set(0);
-    algaeWrist2.set(0);
-  }
-
-  public void moveWristToPosition(double position) {
-    // move wrist to position
-    algaeWrist1.getEncoder().setPosition(position);
-    algaeWrist2.getEncoder().setPosition(position);
   }
 
   public double getWristPosition() {
@@ -116,6 +112,5 @@ public class AlgaeIntake extends SubsystemBase {
   public void resetWristPosition() {
     // reset wrist position
     algaeWrist1.getEncoder().setPosition(0);
-    algaeWrist2.getEncoder().setPosition(0);
   }
 }
