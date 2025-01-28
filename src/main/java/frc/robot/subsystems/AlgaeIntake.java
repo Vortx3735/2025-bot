@@ -31,13 +31,12 @@ public class AlgaeIntake extends SubsystemBase {
 
   private double position;
 
-  public AlgaeIntake(int motor1id, int wrist1id, int motor2id, int wrist2id) {
+  public AlgaeIntake(int motor1id, int wrist1id, int motor2id, int wristid) {
     // Intake constructor
     SparkMaxConfig algaeInMotorConfig = new SparkMaxConfig();
     SparkMaxConfig algaeWristConfig = new SparkMaxConfig();
 
     algaeInMotor1 = new SparkMax(motor1id, MotorType.kBrushless);
-    algaeInMotor2 = new SparkMax(motor2id, MotorType.kBrushless);
     algaeInMotorConfig.inverted(true).idleMode(IdleMode.kBrake);
 
     // set up PID
@@ -54,7 +53,7 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWrist2.configure(
         algaeWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    wristEncoder = new CANcoder(19);
+    wristEncoder = new CANcoder(wristid);
 
     ka = 0.0;
     kg = 0.0;
@@ -114,7 +113,10 @@ public class AlgaeIntake extends SubsystemBase {
     // reset wrist position
     algaeWrist1.getEncoder().setPosition(0);
   }
-  public void hold(){
-    algaeWrist1.set(wristPID.calculate(position * 2 * Math.PI, (int)position * 2 * Math.PI) + wristFF.calculate(position * 2 * Math.PI, kv));
+
+  public void hold() {
+    algaeWrist1.set(
+        wristPID.calculate(position * 2 * Math.PI, (int) position * 2 * Math.PI)
+            + wristFF.calculate(position * 2 * Math.PI, kv));
   }
 }

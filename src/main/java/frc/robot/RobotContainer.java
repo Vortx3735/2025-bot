@@ -14,9 +14,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.DefaultCoralIntakeCommand;
+import frc.robot.commands.DefaultAlgaeIntakeCommand;
+import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.CoralIntake;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
 
@@ -42,13 +42,12 @@ public class RobotContainer {
   private final VorTXControllerXbox joystick = new VorTXControllerXbox(0);
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
+  // can ids need to be changed
+  private final AlgaeIntake m_algaeIntake = new AlgaeIntake(21, 22, 23, 24);
   /* Path follower */
   private final AutoFactory autoFactory;
   private final AutoRoutines autoRoutines;
   private final AutoChooser autoChooser = new AutoChooser();
-
-  public final CoralIntake coralIntake;
 
   public RobotContainer() {
     autoFactory = drivetrain.createAutoFactory();
@@ -59,10 +58,6 @@ public class RobotContainer {
 
     configureBindings();
     configureNetworkTables();
-
-    coralIntake = new CoralIntake(0, 0, 0); // set to arbitrary numbers for now
-
-    coralIntake.setDefaultCommand(new DefaultCoralIntakeCommand(coralIntake));
   }
 
   private void configureNetworkTables() {
@@ -78,6 +73,7 @@ public class RobotContainer {
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
+    m_algaeIntake.setDefaultCommand(new DefaultAlgaeIntakeCommand(m_algaeIntake));
     drivetrain.setDefaultCommand(
         // Drivetrain will execute thigradlew.bat :spotlessApplys command periodically
         drivetrain.applyRequest(
