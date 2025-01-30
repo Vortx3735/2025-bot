@@ -25,6 +25,7 @@ public class DefaultAlgaeIntakeCommand extends Command {
   @Override
   public void execute() {
     m_AlgaeIntake.hold();
+    m_AlgaeIntake.stopIntake();
   }
 
   // Called once the command ends or is interrupted.
