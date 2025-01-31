@@ -32,7 +32,7 @@ public class CoralIntake extends SubsystemBase {
   private double ka, kg, ks, kv;
 
   public DigitalInput beamBreakCoral1 = new DigitalInput(3); // Update with the correct DIO port
-  public DigitalInput beamBreakCoral2 = new DigitalInput(3); // Update with the correct DIO port
+  public DigitalInput beamBreakCoral2 = new DigitalInput(4); // Update with the correct DIO port
 
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable coralTable = inst.getTable("CoralState");
@@ -92,6 +92,7 @@ public class CoralIntake extends SubsystemBase {
     // move motor
     coralInMotor1.set(speed);
     coralInMotor2.set(speed);
+    System.out.println("test");
   }
 
   public void stopIntake() {
