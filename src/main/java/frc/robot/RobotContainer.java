@@ -63,8 +63,8 @@ public class RobotContainer {
     configureBindings();
     configureNetworkTables();
 
-    coralIntake = new CoralIntake(0, 0, 0); // set to arbitrary numbers for now
-    algaeIntake = new AlgaeIntake(0, 0, 0, 0);
+    coralIntake = new CoralIntake(31, 32, 33); // set to arbitrary numbers for now
+    algaeIntake = new AlgaeIntake(34, 35, 36, 37);
     coralIntake.setDefaultCommand(new DefaultCoralIntakeCommand(coralIntake));
     algaeIntake.setDefaultCommand(new DefaultAlgaeIntakeCommand(algaeIntake));
   }

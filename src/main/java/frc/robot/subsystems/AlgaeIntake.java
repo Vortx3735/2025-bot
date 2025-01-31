@@ -19,13 +19,10 @@ public class AlgaeIntake extends SubsystemBase {
 
   private ArmFeedforward wristFF;
   private double ka, kg, ks, kv;
-  // Right side algae instake
+
   static SparkMax algaeInMotor1;
   static SparkMax algaeWrist1;
-
-  // Left side algae intake
   static SparkMax algaeInMotor2;
-  static SparkMax algaeWrist2;
 
   private final CANcoder wristEncoder;
 
@@ -46,11 +43,7 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
     algaeInMotor1.configure(
         algaeInMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    algaeInMotor2.configure(
-        algaeInMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     algaeWrist1.configure(
-        algaeWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    algaeWrist2.configure(
         algaeWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     wristEncoder = new CANcoder(wristid);
