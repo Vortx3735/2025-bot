@@ -14,7 +14,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.DefaultCoralIntakeCommand;
+import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.util.TunerConstants;
@@ -49,6 +51,7 @@ public class RobotContainer {
   private final AutoChooser autoChooser = new AutoChooser();
 
   public final CoralIntake coralIntake;
+  public final AlgaeIntake algaeIntake;
 
   public RobotContainer() {
     autoFactory = drivetrain.createAutoFactory();
@@ -61,8 +64,9 @@ public class RobotContainer {
     configureNetworkTables();
 
     coralIntake = new CoralIntake(0, 0, 0); // set to arbitrary numbers for now
-
+    algaeIntake = new AlgaeIntake(0, 0, 0, 0);
     coralIntake.setDefaultCommand(new DefaultCoralIntakeCommand(coralIntake));
+    algaeIntake.setDefaultCommand(new DefaultAlgaeIntakeCommand(algaeIntake));
   }
 
   private void configureNetworkTables() {

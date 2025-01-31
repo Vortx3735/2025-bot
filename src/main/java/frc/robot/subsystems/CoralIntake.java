@@ -32,7 +32,7 @@ public class CoralIntake extends SubsystemBase {
   private double ka, kg, ks, kv;
 
   public DigitalInput beamBreakCoral1 = new DigitalInput(3); // Update with the correct DIO port
-  public DigitalInput beamBreakCoral2 = new DigitalInput(3); // Update with the correct DIO port
+  public DigitalInput beamBreakCoral2 = new DigitalInput(4); // Update with the correct DIO port
 
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable coralTable = inst.getTable("CoralState");
