@@ -19,6 +19,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -40,6 +41,7 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   private final VorTXControllerXbox joystick = new VorTXControllerXbox(0);
+  private final VorTXControllerXbox joystick2 = new VorTXControllerXbox(1);
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -121,6 +123,11 @@ public class RobotContainer {
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    //intake and outtake
+    joystick2.a().whileTrue(new RunCommand(() -> coralIntake.move(-1), coralIntake));
+    joystick2.b().whileTrue(new RunCommand(() -> coralIntake.move(1), coralIntake));
+
   }
 
   public Command getAutonomousCommand() {

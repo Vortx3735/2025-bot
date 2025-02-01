@@ -37,7 +37,7 @@ public class CoralIntake extends SubsystemBase {
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable coralTable = inst.getTable("CoralState");
   private final DoublePublisher coralInMotor1Vel =
-      coralTable.getDoubleTopic("CoralInMotorVel").publish();
+      coralTable.getDoubleTopic("CoralInMotor1Vel").publish();
   private final DoublePublisher coralInMother2Vel =
       coralTable.getDoubleTopic("CoralInMotor2Vel").publish();
 
