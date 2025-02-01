@@ -1,29 +1,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CoralIntake;
+import frc.robot.subsystems.AlgaeIntake;
 
-public class CoralIntakeCommand extends Command {
-
-  private final CoralIntake m_CoralIntake;
+public class AlgaeIntakeCommand extends Command {
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private final AlgaeIntake m_AlgaeIntake;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public CoralIntakeCommand(CoralIntake subsystem) {
-    this.m_CoralIntake = subsystem;
-    addRequirements(subsystem);
+  public AlgaeIntakeCommand(AlgaeIntake subsystem) {
+    m_AlgaeIntake = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-  }
-
-  public void intake() {
-    m_CoralIntake.move(-1);
-  }
-
-  public void outtake() {
-    m_CoralIntake.move(1);
   }
 
   // Called when the command is initially scheduled.
@@ -36,9 +27,7 @@ public class CoralIntakeCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_CoralIntake.stopIntake();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

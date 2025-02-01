@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -317,5 +318,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     double[] array = {frontRightVal, frontLeftVal, backRightVal, backLeftVal};
     return array;
+  }
+
+  public double getMaxSpeed() {
+    double maxSpeed =
+        NetworkTableInstance.getDefault()
+            .getTable("DriveState")
+            .getEntry("maxSpeed")
+            .getDouble(3.5);
+    return maxSpeed;
+  }
+
+  public double getMaxRotation() {
+    double maxSpeed =
+        NetworkTableInstance.getDefault()
+            .getTable("DriveState")
+            .getEntry("maxRotation")
+            .getDouble(3.14);
+    return maxSpeed;
   }
 }
