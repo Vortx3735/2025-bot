@@ -5,8 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
-import frc.robot.subsystems.ClimbSubsystem;
-import frc.robot.commands.ClimbCommand;
+
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -15,16 +14,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.DefaultCoralIntakeCommand;
 import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
 
 public class RobotContainer {
-    private final ClimbSubsystem climbSubsystem;
+  private final ClimbSubsystem climbSubsystem;
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate =
@@ -56,7 +57,7 @@ public class RobotContainer {
   public final AlgaeIntake algaeIntake;
 
   public RobotContainer() {
-    climbSubsystem = new ClimbSubsystem(1); //the integer is for the motor port
+    climbSubsystem = new ClimbSubsystem(1); // the integer is for the motor port
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
@@ -78,17 +79,17 @@ public class RobotContainer {
 
   public void updateNetworkTables() {
     drivetrain.registerTelemetry(logger::telemeterize);
-    //Climber Telemetary
+    // Climber Telemetary
     logger.updateClimbTelemetry(climbSubsystem);
   }
 
   private void configureBindings() {
-    //climber keybinds use D-pad btw
+    // climber keybinds use D-pad btw
     joystick.povUp().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.LIFT));
     joystick.povDown().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.RELEASE));
     joystick.povLeft().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.GRAB));
     joystick.povRight().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.HOLD));
-    //up down right and left are for the climbing mechanism's keybinds
+    // up down right and left are for the climbing mechanism's keybinds
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
