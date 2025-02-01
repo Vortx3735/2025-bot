@@ -135,24 +135,6 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationInit() {}
 
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {}
-  public class Robot extends TimedRobot {
-    private Elevator elevator;
-
-    @Override
-    public void robotInit() {
-        CANCoder canCoder = new CANCoder(14); // Replace with your actual device ID
-        TalonFX talonFX1 = new TalonFX(1); // Replace with your actual device ID
-        TalonFX talonFX2 = new TalonFX(2); // Replace with your actual device ID
-        elevator = new Elevator(canCoder, talonFX1, talonFX2);
-    }
-
-    @Override
-    public void teleopPeriodic() {
-        // Example usage
-        elevator.moveToElevatorLevel(Elevator.ElevatorLevel.LEVEL1);
-    }
+ 
 }
-}
+
