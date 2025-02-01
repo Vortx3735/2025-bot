@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.DefaultCoralIntakeCommand;
@@ -21,7 +22,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -135,10 +135,10 @@ public class RobotContainer {
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     drivetrain.registerTelemetry(logger::telemeterize);
-    
-        //intake and outtake
-    joystick2.a().whileTrue(new RunCommand(() -> coralIntake.move(-1), coralIntake));
-    joystick2.b().whileTrue(new RunCommand(() -> coralIntake.move(1), coralIntake));
+
+    // intake and outtake
+    // joystick2.a().whileTrue(new RunCommand(() -> coralIntake.move(-1), coralIntake));
+    // joystick2.b().whileTrue(new RunCommand(() -> coralIntake.move(1), coralIntake));
   }
 
   public Command getAutonomousCommand() {

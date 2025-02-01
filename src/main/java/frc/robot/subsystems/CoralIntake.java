@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -40,7 +41,9 @@ public class CoralIntake extends SubsystemBase {
       coralTable.getDoubleTopic("CoralInMotor1Vel").publish();
   private final DoublePublisher coralInMother2Vel =
       coralTable.getDoubleTopic("CoralInMotor2Vel").publish();
-
+  private final DoublePublisher coralWristVel = coralTable.getDoubleTopic("CoralWristVel").publish();
+  private final DoublePublisher coralWristPos = coralTable.getDoubleTopic("CoralWristPos").publish();
+  private final BooleanPublisher coralDetected = coralTable.getBooleanTopic("CoralDetected").publish();
   public CoralIntake(int motor1id, int Wristid, int motor2id) {
     // Intake constructor
     SparkMaxConfig coralInMotorConfig = new SparkMaxConfig();
@@ -86,6 +89,10 @@ public class CoralIntake extends SubsystemBase {
     position = wristEncoder.getAbsolutePosition().getValueAsDouble();
     coralInMotor1Vel.set(coralInMotor1.getEncoder().getVelocity());
     coralInMother2Vel.set(coralInMotor2.getEncoder().getVelocity());
+    coralWristVel.set(coralWrist.getEncoder().getVelocity());
+    coralDetected.set(isCoralDetected());
+    coralWristPos.set(position);
+
   }
 
   public void move(double speed) {
@@ -122,10 +129,6 @@ public class CoralIntake extends SubsystemBase {
     return coralWrist.getEncoder().getPosition();
   }
 
-  public void resetWristPosition() {
-    // reset wrist position
-    coralWrist.getEncoder().setPosition(0);
-  }
 
   public boolean isCoralDetected() {
     // check if coral is detected type shi
