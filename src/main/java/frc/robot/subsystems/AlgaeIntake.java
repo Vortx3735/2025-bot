@@ -19,25 +19,21 @@ public class AlgaeIntake extends SubsystemBase {
 
   private ArmFeedforward wristFF;
   private double ka, kg, ks, kv;
-  // Right side algae instake
+
   static SparkMax algaeInMotor1;
   static SparkMax algaeWrist1;
-
-  // Left side algae intake
   static SparkMax algaeInMotor2;
-  static SparkMax algaeWrist2;
 
   private final CANcoder wristEncoder;
 
   private double position;
 
-  public AlgaeIntake(int motor1id, int wrist1id, int motor2id, int wrist2id) {
+  public AlgaeIntake(int motor1id, int wrist1id, int motor2id, int wristid) {
     // Intake constructor
     SparkMaxConfig algaeInMotorConfig = new SparkMaxConfig();
     SparkMaxConfig algaeWristConfig = new SparkMaxConfig();
 
     algaeInMotor1 = new SparkMax(motor1id, MotorType.kBrushless);
-    algaeInMotor2 = new SparkMax(motor2id, MotorType.kBrushless);
     algaeInMotorConfig.inverted(true).idleMode(IdleMode.kBrake);
 
     // set up PID
@@ -47,14 +43,10 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
     algaeInMotor1.configure(
         algaeInMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    algaeInMotor2.configure(
-        algaeInMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     algaeWrist1.configure(
         algaeWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    algaeWrist2.configure(
-        algaeWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    wristEncoder = new CANcoder(19);
+    wristEncoder = new CANcoder(wristid);
 
     ka = 0.0;
     kg = 0.0;
@@ -74,6 +66,7 @@ public class AlgaeIntake extends SubsystemBase {
     position = wristEncoder.getAbsolutePosition().getValueAsDouble();
     // send data to dashboard or something but idk how to do that
     // SmartDashboard.putData("Wrist 1 velocity",algaeWrist1.getEncoder().getVelocity());
+
   }
 
   public void move(double speed) {
@@ -106,11 +99,17 @@ public class AlgaeIntake extends SubsystemBase {
 
   public double getWristPosition() {
     // get wrist position
-    return position;
+    return algaeWrist1.getEncoder().getPosition();
   }
 
   public void resetWristPosition() {
     // reset wrist position
     algaeWrist1.getEncoder().setPosition(0);
+  }
+
+  public void hold() {
+    algaeWrist1.set(
+        wristPID.calculate(position * 2 * Math.PI, (int) position * 2 * Math.PI)
+            + wristFF.calculate(position * 2 * Math.PI, kv));
   }
 }
