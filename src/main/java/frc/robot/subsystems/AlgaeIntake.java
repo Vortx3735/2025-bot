@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeIntake extends SubsystemBase {
@@ -25,6 +26,8 @@ public class AlgaeIntake extends SubsystemBase {
   static SparkMax algaeInMotor2;
 
   private final CANcoder wristEncoder;
+
+  public DigitalInput beamBreakAlgae = new DigitalInput(3); // Update with the correct DIO port
 
   private double position;
 
@@ -112,5 +115,10 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWrist1.set(
         wristPID.calculate(position * 2 * Math.PI, (int) position * 2 * Math.PI)
             + wristFF.calculate(position * 2 * Math.PI, kv));
+  }
+
+  public boolean isAlgaeDetected() {
+    // check if coral is detected type shi
+    return beamBreakAlgae.get();
   }
 }

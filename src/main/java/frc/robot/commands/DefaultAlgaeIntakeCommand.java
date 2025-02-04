@@ -24,13 +24,22 @@ public class DefaultAlgaeIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_AlgaeIntake.hold();
-    m_AlgaeIntake.stopIntake();
+    if (m_AlgaeIntake.isAlgaeDetected()) {
+      m_AlgaeIntake.moveWristToPosition(0); // Move to elevator angle (default to L4)
+      m_AlgaeIntake.stopIntake();
+      ; // Stop intake motor
+    } else {
+      m_AlgaeIntake.moveWristToPosition(-0.5); // Move to Human Player position
+      m_AlgaeIntake.move(1.0); // Run intake motor
+    }
   }
+
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_AlgaeIntake.stopIntake();
+  }
 
   // Returns true when the command should end.
   @Override
