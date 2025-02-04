@@ -132,6 +132,11 @@ public class CoralIntake extends SubsystemBase {
     return coralWrist.getEncoder().getPosition();
   }
 
+  public void resetWristPosition() {
+    // reset wrist position
+    coralWrist.getEncoder().setPosition(0);
+  }
+
   public boolean isCoralDetected() {
     // check if coral is detected type shi
     return !beamBreakCoral1.get() || !beamBreakCoral2.get();
