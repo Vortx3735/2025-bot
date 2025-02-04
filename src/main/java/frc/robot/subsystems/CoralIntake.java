@@ -41,9 +41,13 @@ public class CoralIntake extends SubsystemBase {
       coralTable.getDoubleTopic("CoralInMotor1Vel").publish();
   private final DoublePublisher coralInMother2Vel =
       coralTable.getDoubleTopic("CoralInMotor2Vel").publish();
-  private final DoublePublisher coralWristVel = coralTable.getDoubleTopic("CoralWristVel").publish();
-  private final DoublePublisher coralWristPos = coralTable.getDoubleTopic("CoralWristPos").publish();
-  private final BooleanPublisher coralDetected = coralTable.getBooleanTopic("CoralDetected").publish();
+  private final DoublePublisher coralWristVel =
+      coralTable.getDoubleTopic("CoralWristVel").publish();
+  private final DoublePublisher coralWristPos =
+      coralTable.getDoubleTopic("CoralWristPos").publish();
+  private final BooleanPublisher coralDetected =
+      coralTable.getBooleanTopic("CoralDetected").publish();
+
   public CoralIntake(int motor1id, int Wristid, int motor2id) {
     // Intake constructor
     SparkMaxConfig coralInMotorConfig = new SparkMaxConfig();
@@ -92,7 +96,6 @@ public class CoralIntake extends SubsystemBase {
     coralWristVel.set(coralWrist.getEncoder().getVelocity());
     coralDetected.set(isCoralDetected());
     coralWristPos.set(position);
-
   }
 
   public void move(double speed) {
@@ -128,7 +131,6 @@ public class CoralIntake extends SubsystemBase {
     // get wrist position
     return coralWrist.getEncoder().getPosition();
   }
-
 
   public boolean isCoralDetected() {
     // check if coral is detected type shi
