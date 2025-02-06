@@ -43,9 +43,9 @@ public final class Constants {
 
   // These are for the port mappings
   public static final class Sensors {
-    public static final int Beam_Break_Sensors_ID = 9;
-    public static final int Gyro_Poter_ID = 10;
-    public static final int Acclerometer_port_ID = 11;
+    public static final int CORAL_LEFT_BEAM_BREAK = 1;
+    public static final int CORAL_RIGHT_BEAM_BREAK = 2;
+    public static final int ALGAE_BEAM_BREAK = 3;
   }
 
   public static final class Controller {
