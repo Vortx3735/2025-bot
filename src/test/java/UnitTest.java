@@ -1,5 +1,3 @@
-package frc.robot.test.java;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.revrobotics.sim.SparkMaxSim;
@@ -20,7 +18,7 @@ public class UnitTest {
   @BeforeEach
   void setup() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
-    m_CoralIntake = new CoralIntake(1, 2, 3, 4);
+    m_CoralIntake = new CoralIntake(1, 2, 3);
     motor = CoralIntake.coralInMotor1;
     motor_Sim = new SparkMaxSim(motor, DCMotor.getNeo550(1));
   }
