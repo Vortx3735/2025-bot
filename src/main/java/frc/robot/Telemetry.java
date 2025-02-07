@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -21,8 +22,23 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.subsystems.ClimbSubsystem;
 
 public class Telemetry {
+  DoublePublisher xPub;
+  DoublePublisher yPub;
+  DoublePublisher anglePub;
+  DoublePublisher frontRightCancoderPub;
+  DoublePublisher frontLeftCancoderPub;
+  DoublePublisher backRightCancoderPub;
+  DoublePublisher backLeftCancoderPub;
+  private final DoublePublisher motorSpeedPub;
+  private final DoublePublisher positionPub;
+  private final DoublePublisher velocityPub;
+
+  BooleanPublisher exampleSensorPub;
+
+  boolean exampleSensor = false;
   private final double MaxSpeed;
 
   /**
@@ -35,10 +51,15 @@ public class Telemetry {
     maxSpeedEntry.setDouble(maxSpeed);
     maxRotationEntry.setDouble(maxAngularRate);
     SignalLogger.start();
+    NetworkTable climbTable = NetworkTableInstance.getDefault().getTable("Climbsubsystem");
+    motorSpeedPub = climbTable.getDoubleTopic("motorSpeed").publish();
+    positionPub = climbTable.getDoubleTopic("position").publish();
+    velocityPub = climbTable.getDoubleTopic("velocity").publish();
   }
 
   /* What to publish over networktables for telemetry */
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
   /* Robot swerve drive state */
   private final NetworkTable driveStateTable = inst.getTable("DriveState");
   private final StructPublisher<Pose2d> drivePose =
@@ -182,5 +203,17 @@ public class Telemetry {
                 "Robot Angle", () -> state.Pose.getRotation().getDegrees() + 180, null);
           }
         });
+  }
+
+  public void updateClimbTelemetry(ClimbSubsystem climbSubsystem) {
+    motorSpeedPub.set(climbSubsystem.getMotorSpeed());
+    positionPub.set(climbSubsystem.getPosition());
+    velocityPub.set(climbSubsystem.getVelocity());
+  }
+
+  public void stopPublishing() {
+    motorSpeedPub.close();
+    positionPub.close();
+    velocityPub.close();
   }
 }
