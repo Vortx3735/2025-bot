@@ -57,7 +57,7 @@ public class RobotContainer {
   public final AlgaeIntake algaeIntake;
 
   public RobotContainer() {
-    climbSubsystem = new ClimbSubsystem(1); // the integer is for the motor port
+    climbSubsystem = new ClimbSubsystem(Constants.Climber.Climber_Motor_ID, Constants.Climber.Climber_Motor_ID2);
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
@@ -87,8 +87,6 @@ public class RobotContainer {
     // climber keybinds use D-pad btw
     joystick.povUp().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.LIFT));
     joystick.povDown().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.RELEASE));
-    joystick.povLeft().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.GRAB));
-    joystick.povRight().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.HOLD));
     // up down right and left are for the climbing mechanism's keybinds
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.

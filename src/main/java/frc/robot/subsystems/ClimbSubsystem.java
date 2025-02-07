@@ -1,57 +1,68 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class ClimbSubsystem extends SubsystemBase {
-  private final SparkMax climbMotor;
-  private final RelativeEncoder encoder;
+    private final TalonFX climbMotor1;
+    private final TalonFX climbMotor2;
 
-  public ClimbSubsystem(int motorPort) {
-    climbMotor = new SparkMax(1, MotorType.kBrushless);
-    encoder = climbMotor.getEncoder();
-  }
+    private static final double CLIMB_MAX_POSITION = 10000; // Placeholder encoder ticks
+    private static final double PITCH_THRESHOLD = 30.0; // Degrees, placeholder
 
-  public void grab() {
-    climbMotor.set(0.2); //  for grabbing
-  }
+    public ClimbSubsystem(int motorPort1, int motorPort2) {
+        climbMotor1 = new TalonFX(motorPort1);
+        climbMotor2 = new TalonFX(motorPort2);
+        
+        // Configure second motor to follow the first
+        climbMotor2.setControl(new Follower(climbMotor1.getDeviceID(), false));
+        
+        setBrakeMode();
+    }
 
-  public void lift() {
-    climbMotor.set(0.5); //  for lifting
-  }
+    public void setSpeed(double speed) {
+        if (shouldStop(speed)) {
+            stopMotor();
+            return;
+        }
+        climbMotor1.setControl(new DutyCycleOut(speed));
+    }
 
-  public void release() {
-    climbMotor.set(-0.2); //  for releasing
-  }
+    private boolean shouldStop(double speed) {
+        double position = getPosition();
+        if (speed > 0) { // Extending
+            return position >= CLIMB_MAX_POSITION;
+        }
+        return false; // Add lower limit check if needed
+    }
 
-  public void hold() {
-    climbMotor.set(0.1); //  to hold position
-  }
+    public void stopMotor() {
+        climbMotor1.stopMotor();
+    }
 
-  public void stop() {
-    climbMotor.set(0); // Stop the motor
-  }
+    public void setBrakeMode() {
+        climbMotor1.setNeutralMode(NeutralModeValue.Brake);
+        climbMotor2.setNeutralMode(NeutralModeValue.Brake);
+    }
 
-  public double getMotorSpeed() {
-    return climbMotor.get();
-  }
+    public void setCoastMode() {
+        climbMotor1.setNeutralMode(NeutralModeValue.Coast);
+        climbMotor2.setNeutralMode(NeutralModeValue.Coast);
+    }
 
-  public double getPosition() {
-    return encoder.getPosition();
-  }
+    public double getMotorSpeed() {
+        return climbMotor1.get() * climbMotor1.getDeviceID(); // Returns percent output
+    }
 
-  public double getVelocity() {
-    return encoder.getVelocity();
-  }
+    public double getPosition() {
+        return climbMotor1.getPosition().getValue(); // Encoder position
+    }
 
-  @Override
-  public void periodic() {
-    // Update telemetry to Elastic
-    SmartDashboard.putNumber("Climb Motor Speed", getMotorSpeed());
-    SmartDashboard.putNumber("Climb Position", getPosition());
-    SmartDashboard.putNumber("Climb Velocity", getVelocity());
-  }
+    public double getVelocity() {
+        return climbMotor1.getVelocity().getValue(); // Encoder velocity
+    }
 }
