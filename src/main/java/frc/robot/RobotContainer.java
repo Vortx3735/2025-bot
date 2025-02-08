@@ -103,8 +103,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     // climber keybinds use D-pad btw
-    joystick.povUp().whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(0.5), climbSubsystem));
-    joystick
+    operator.povUp().whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(0.5), climbSubsystem));
+    operator
         .povDown()
         .whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(-0.5), climbSubsystem));
     // up down right and left are for the climbing mechanism's keybinds
