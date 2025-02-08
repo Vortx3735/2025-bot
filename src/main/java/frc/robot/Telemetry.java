@@ -207,8 +207,7 @@ public class Telemetry {
 
   public void updateClimbTelemetry(ClimbSubsystem climbSubsystem) {
     motorSpeedPub.set(climbSubsystem.getMotorSpeed());
-    positionPub.set(climbSubsystem.getPosition());
-    velocityPub.set(climbSubsystem.getVelocity().getRadians());
+    positionPub.set(climbSubsystem.getClimbPosition());
   }
 
   public void stopPublishing() {
