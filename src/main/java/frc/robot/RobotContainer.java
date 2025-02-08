@@ -58,7 +58,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     climbSubsystem =
-        new ClimbSubsystem(Constants.Climber.Climber_Motor_ID, Constants.Climber.Climber_Motor_ID2);
+        new ClimbSubsystem(
+            Constants.Climber.CLIMBER_LEFTMOTOR_ID, Constants.Climber.CLIMBER_RIGHTMOTOR_ID);
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
