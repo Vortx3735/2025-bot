@@ -15,11 +15,12 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class CoralIntake extends SubsystemBase {
 
-  public static SparkMax coralInMotor1;
-  public static SparkMax coralInMotor2;
+  public static SparkMax leftCoralMotor;
+  public static SparkMax rightCoralMotor;
   public static SparkMax coralWrist;
 
   private final CANcoder wristEncoder;
@@ -31,39 +32,43 @@ public class CoralIntake extends SubsystemBase {
   private ArmFeedforward wristFF;
   private double ka, kg, ks, kv;
 
-  public DigitalInput beamBreakCoral1 = new DigitalInput(3); // Update with the correct DIO port
-  public DigitalInput beamBreakCoral2 = new DigitalInput(4); // Update with the correct DIO port
+  public DigitalInput leftCoralBeamBreak =
+      new DigitalInput(Constants.Sensors.CORAL_LEFT_BEAM_BREAK);
+  public DigitalInput rightCoralBeamBreak =
+      new DigitalInput(Constants.Sensors.CORAL_RIGHT_BEAM_BREAK);
 
+  // NetworkTable Initialization
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable coralTable = inst.getTable("CoralState");
-  private final DoublePublisher coralInMotor1Vel =
+  private final DoublePublisher leftCoralMotorVel =
       coralTable.getDoubleTopic("CoralInMotorVel").publish();
   private final DoublePublisher coralInMother2Vel =
-      coralTable.getDoubleTopic("CoralInMotor2Vel").publish();
+      coralTable.getDoubleTopic("rightCoralMotorVel").publish();
 
-  public CoralIntake(int motor1id, int Wristid, int motor2id) {
+  public CoralIntake(int leftMotorId, int Wristid, int rightMotorId) {
     // Intake constructor
+
     SparkMaxConfig coralInMotorConfig = new SparkMaxConfig();
     SparkMaxConfig coralWristConfig = new SparkMaxConfig();
 
-    coralInMotor1 = new SparkMax(motor1id, MotorType.kBrushless);
-    coralInMotor2 = new SparkMax(motor2id, MotorType.kBrushless);
+    leftCoralMotor = new SparkMax(leftMotorId, MotorType.kBrushless);
+    rightCoralMotor = new SparkMax(rightMotorId, MotorType.kBrushless);
+
     coralInMotorConfig.inverted(true).idleMode(IdleMode.kBrake);
 
-    // set up PID
+    // set up PID for Coral Wrist
     coralWrist = new SparkMax(Wristid, MotorType.kBrushless);
+    wristEncoder = new CANcoder(Constants.Coral_Intake.CORAL_WRISTPIVOT_ENCODER_ID);
     coralWristConfig.inverted(true).idleMode(IdleMode.kBrake);
     coralWristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     coralWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
 
-    coralInMotor1.configure(
+    leftCoralMotor.configure(
         coralInMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    coralInMotor2.configure(
+    rightCoralMotor.configure(
         coralInMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     coralWrist.configure(
         coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    wristEncoder = new CANcoder(19);
 
     ka = 0.0;
     kg = 0.0;
@@ -84,20 +89,20 @@ public class CoralIntake extends SubsystemBase {
     // send data to dashboard or something but idk how to do that
     // SmartDashboard.putData("Wrist 1 velocity",coralWrist.getEncoder().getVelocity());
     position = wristEncoder.getAbsolutePosition().getValueAsDouble();
-    coralInMotor1Vel.set(coralInMotor1.getEncoder().getVelocity());
-    coralInMother2Vel.set(coralInMotor2.getEncoder().getVelocity());
+    leftCoralMotorVel.set(leftCoralMotor.getEncoder().getVelocity());
+    coralInMother2Vel.set(rightCoralMotor.getEncoder().getVelocity());
   }
 
   public void move(double speed) {
     // move motor
-    coralInMotor1.set(speed);
-    coralInMotor2.set(speed);
+    leftCoralMotor.set(speed);
+    rightCoralMotor.set(speed);
   }
 
   public void stopIntake() {
     // stop motor
-    coralInMotor1.set(0);
-    coralInMotor2.set(0);
+    leftCoralMotor.set(0);
+    rightCoralMotor.set(0);
   }
 
   public void moveWrist(double speed) {
@@ -128,6 +133,6 @@ public class CoralIntake extends SubsystemBase {
 
   public boolean isCoralDetected() {
     // check if coral is detected type shi
-    return !beamBreakCoral1.get() || !beamBreakCoral2.get();
+    return !leftCoralBeamBreak.get() || !rightCoralBeamBreak.get();
   }
 }
