@@ -50,10 +50,9 @@ public final class Constants {
     public static final int CORAL_WRISTPIVOT_ENCODER_ID = 20; // cancoder
   }
 
-  public static final class Climber { // climber has two krakens
+  public static final class Climber {
     public static final int CLIMBER_LEFTMOTOR_ID = 21;
     public static final int CLIMBER_RIGHTMOTOR_ID = 22;
-    public static final int CLIMBER_ENCODER_ID = 23; // cancoder
   }
 
   public static final class elevator {
