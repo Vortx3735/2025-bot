@@ -34,6 +34,8 @@ public final class Constants {
     public static final int BACKRIGHT_DRIVE_ID = 10;
     public static final int BACKRIGHT_TURN_ID = 11;
     public static final int BACKRIGHT_CANCODER = 12;
+
+    public static final int PIGEON_ID = 23; // cancoder
   }
 
   public static final class Algae_Intake {
@@ -66,66 +68,5 @@ public final class Constants {
     public static final int CORAL_LEFT_BEAM_BREAK = 1;
     public static final int CORAL_RIGHT_BEAM_BREAK = 2;
     public static final int ALGAE_BEAM_BREAK = 3;
-  }
-
-  public static final class Controller {
-    public static final int Controller_ID =
-        12; // let me know if the controller id is for all keybinds or just for the...controller
-  }
-
-  public static final class Other_Peripherals {
-    public static final int Camera_Sensor_ID = 13;
-    public static final int April_Tags_Allingment_ID = 14;
-  }
-
-  public static final class Elevator_Setpoints {
-    public static final double Human_Player_position_setpoint = 15; // Placeholder
-    public static final double L1_HEIGHT_ID = 16; // Placeholder
-    public static final double L2_HEIGHT_ID = 17; // Placeholder
-    public static final double L3_HEIGHT_ID = 18; // Placeholder
-    public static final double L4_HEIGHT_ID = 19;
-  }
-
-  public static final class Wrist_Setpoints {
-    public static final int Coral_Intake_ID = 20; // placeholder
-    public static final int Move_To_ElevatorPostion_ID = 21;
-    public static final int Move_To_HumanPlayer_ID = 22;
-  }
-
-  public static final class Climber_Setpoint {
-    public static final int Climber_Height_ID = 23;
-  }
-
-  // these ID's are for speed limits
-  public static final class Speed_Limits {
-    public static final int SpeedLimit_DriveTrainID = 24;
-    public static final int RotationLimit_ID = 25;
-  }
-
-  // these ID's are for autonamous constants
-  public static final class autonmanus_constants {
-    public static final int Path_Parameters_ID = 26;
-    public static final int April_Tags_Allingment_ID = 27;
-    // Below are Auton set point
-    public static final int Start_position_ID = 28;
-    public static final int setpointIDS = 29;
-  }
-
-  // these are Miscellaneous ID's
-  public static final class Deadband {
-    public static final int Deadband_ID = 30;
-  }
-
-  public static final class PID {
-    public static double elevator_ID = 31;
-    public static double wrist_position_ID = 32;
-    public static double auton_allingment_ID = 33;
-  }
-
-  // This class is for the physics based safety thresholds SAFETY FIRST
-  public static final class Safety_Thresholds {
-    public static final int Max_Speed_ID = 34;
-    public static final int Max_Acceleration_ID = 35;
-    public static final int Max_Tilt_ID = 36;
   }
 }

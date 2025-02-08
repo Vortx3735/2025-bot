@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.elevator;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DefaultAlgaeIntakeCommand;
