@@ -23,7 +23,6 @@ public class UnitTest {
     m_CoralIntake = new CoralIntake(1, 2, 3);
     motor = CoralIntake.coralWrist;
     motor_Sim = new SparkMaxSim(motor, DCMotor.getNeo550(1));
-
   }
 
   @Test

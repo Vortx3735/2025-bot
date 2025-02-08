@@ -32,8 +32,10 @@ public class CoralIntake extends SubsystemBase {
   private ArmFeedforward wristFF;
   private double ka, kg, ks, kv;
 
-  public DigitalInput leftCoralBeamBreak = new DigitalInput(Constants.Sensors.CORAL_LEFT_BEAM_BREAK); 
-  public DigitalInput rightCoralBeamBreak = new DigitalInput(Constants.Sensors.CORAL_RIGHT_BEAM_BREAK); 
+  public DigitalInput leftCoralBeamBreak =
+      new DigitalInput(Constants.Sensors.CORAL_LEFT_BEAM_BREAK);
+  public DigitalInput rightCoralBeamBreak =
+      new DigitalInput(Constants.Sensors.CORAL_RIGHT_BEAM_BREAK);
 
   // NetworkTable Initialization
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -45,6 +47,7 @@ public class CoralIntake extends SubsystemBase {
 
   public CoralIntake(int leftMotorId, int Wristid, int rightMotorId) {
     // Intake constructor
+
     SparkMaxConfig coralInMotorConfig = new SparkMaxConfig();
     SparkMaxConfig coralWristConfig = new SparkMaxConfig();
 
@@ -55,6 +58,7 @@ public class CoralIntake extends SubsystemBase {
 
     // set up PID for Coral Wrist
     coralWrist = new SparkMax(Wristid, MotorType.kBrushless);
+    wristEncoder = new CANcoder(Constants.Coral_Intake.CORAL_WRISTPIVOT_ENCODER_ID);
     coralWristConfig.inverted(true).idleMode(IdleMode.kBrake);
     coralWristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     coralWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
@@ -65,8 +69,6 @@ public class CoralIntake extends SubsystemBase {
         coralInMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     coralWrist.configure(
         coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    wristEncoder = new CANcoder(19);
 
     ka = 0.0;
     kg = 0.0;

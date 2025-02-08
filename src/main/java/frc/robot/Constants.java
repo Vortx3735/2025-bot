@@ -19,26 +19,47 @@ public final class Constants {
 
   // these are the constants for the Motor Id's
   public static final class Drive_train { // Id's are all placeholders
-    public static final int Left_Drive_ID = 1;
-    public static final int Right_Drive_ID = 2;
+    public static final int FRONTLEFT_DRIVE_ID = 1;
+    public static final int FRONTLEFT_TURN_ID = 2;
+    public static final int FRONTLEFT_CANCODER = 3;
+
+    public static final int FRONTRIGHT_DRIVE_ID = 4;
+    public static final int FRONTRIGHT_TURN_ID = 5;
+    public static final int FRONTRIGHT_CANCODER = 6;
+
+    public static final int BACKLEFT_DRIVE_ID = 7;
+    public static final int BACKLEFT_TURN_ID = 8;
+    public static final int BACKLEFT_CANCODER = 9;
+
+    public static final int BACKRIGHT_DRIVE_ID = 10;
+    public static final int BACKRIGHT_TURN_ID = 11;
+    public static final int BACKRIGHT_CANCODER = 12;
   }
 
   public static final class Algae_Intake {
-    public static final int Intake_Motor_ID = 3;
-    public static final int Wrist_Motor_ID = 4;
+    public static final int ALGAE_LEFTINTAKE_MOTOR_ID = 13;
+    public static final int ALGAE_RIGHTINTAKE_MOTOR_ID = 14;
+    public static final int ALGAE_WRISTPIVOT_MOTOR_ID = 15;
+    public static final int ALGAE_WRISTPIVOT_ENCODER_ID = 16; // cancoder
   }
 
   public static final class Coral_Intake {
-    public static final int Intake_Motor_ID = 5;
-    public static final int Wrist_Motor_ID = 6;
+    public static final int CORAL_LEFTINTAKEMOTOR_ID = 17;
+    public static final int CORAL_RIGHTINTAKEMOTOR_ID = 18;
+    public static final int CORAL_WRISTPIVOT_MOTOR_ID = 19;
+    public static final int CORAL_WRISTPIVOT_ENCODER_ID = 20; // cancoder
   }
 
-  public static final class Climber {
-    public static final int Climber_Motor_ID = 7;
+  public static final class Climber { // climber has two krakens
+    public static final int CLIMBER_LEFTMOTOR_ID = 21;
+    public static final int CLIMBER_RIGHTMOTOR_ID = 22;
+    public static final int CLIMBER_ENCODER_ID = 23; // cancoder
   }
 
   public static final class elevator {
-    public static final int Elevator_Motor_ID = 8;
+    public static final int ELEVATOR_LEFTMOTOR_ID = 24;
+    public static final int ELEVATOR_RIGHTMOTOR_ID = 25;
+    public static final int ELEVATOR_ENCODER_ID = 26; // cancoder
   }
 
   // These are for the port mappings
@@ -58,13 +79,12 @@ public final class Constants {
     public static final int April_Tags_Allingment_ID = 14;
   }
 
-  // these ID's are for Subsystem SetPoints
   public static final class Elevator_Setpoints {
-    public static final int Human_Player_position_setpoint = 15; // Placeholder
-    public static final int L1_HEIGHT_ID = 16; // Placeholder
-    public static final int L2_HEIGHT_ID = 17; // Placeholder
-    public static final int L3_HEIGHT_ID = 18; // Placeholder
-    public static final int L4_HEIGHT_ID = 19;
+    public static final double Human_Player_position_setpoint = 15; // Placeholder
+    public static final double L1_HEIGHT_ID = 16; // Placeholder
+    public static final double L2_HEIGHT_ID = 17; // Placeholder
+    public static final double L3_HEIGHT_ID = 18; // Placeholder
+    public static final double L4_HEIGHT_ID = 19;
   }
 
   public static final class Wrist_Setpoints {
