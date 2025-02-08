@@ -21,6 +21,7 @@ import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.DefaultCoralIntakeCommand;
 import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Elevator;
@@ -28,6 +29,7 @@ import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
 
 public class RobotContainer {
+  private final ClimbSubsystem climbSubsystem;
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate =
@@ -61,6 +63,9 @@ public class RobotContainer {
   public final Elevator elevator;
 
   public RobotContainer() {
+    climbSubsystem =
+        new ClimbSubsystem(
+            Constants.Climber.CLIMBER_LEFTMOTOR_ID, Constants.Climber.CLIMBER_RIGHTMOTOR_ID);
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
@@ -92,9 +97,17 @@ public class RobotContainer {
 
   public void updateNetworkTables() {
     drivetrain.registerTelemetry(logger::telemeterize);
+    // Climber Telemetary
+    logger.updateClimbTelemetry(climbSubsystem);
   }
 
   private void configureBindings() {
+    // climber keybinds use D-pad btw
+    operator.povUp().whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(0.5), climbSubsystem));
+    operator
+        .povDown()
+        .whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(-0.5), climbSubsystem));
+    // up down right and left are for the climbing mechanism's keybinds
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
