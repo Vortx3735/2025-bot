@@ -28,16 +28,20 @@ public class ClimbSubsystem extends SubsystemBase {
       climbMotor2.set(speed);
     }
   }
+
   public void stopMotor() {
     climbMotor1.set(0);
     climbMotor2.set(0);
   }
-  public double getMotorSpeed(){
+
+  public double getMotorSpeed() {
     return climbMotor1.get();
   }
-  public double getClimbPosition(){
+
+  public double getClimbPosition() {
     return climbMotor1.getPosition().getValueAsDouble();
   }
+
   public void setBrakeMode() {
     climbMotor1.setNeutralMode(NeutralModeValue.Brake);
     climbMotor2.setNeutralMode(NeutralModeValue.Brake);
