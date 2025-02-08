@@ -34,8 +34,8 @@ public final class Constants {
   }
 
   public static final class Climber {
-    public static final int Climber_Motor_ID = 7;
-    public static final int Climber_Motor_ID2 = 99;
+    public static final int CLIMBER_LEFTMOTOR_ID = 21;
+    public static final int CLIMBER_RIGHTMOTOR_ID = 22;
   }
 
   public static final class elevator {
