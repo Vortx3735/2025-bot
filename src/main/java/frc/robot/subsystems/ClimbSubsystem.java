@@ -1,68 +1,53 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class ClimbSubsystem extends SubsystemBase {
-    private final TalonFX climbMotor1;
-    private final TalonFX climbMotor2;
+  private final TalonFX climbMotor1;
+  private final TalonFX climbMotor2;
+  public static final double CLIMB_MIN_POSITION = 0; // Placeholder encoder ticks
+  public static final double CLIMB_MAX_POSITION = 10000; // Placeholder encoder ticks
+  private static final double PITCH_THRESHOLD = 30.0; // Degrees, placeholder
 
-    private static final double CLIMB_MAX_POSITION = 10000; // Placeholder encoder ticks
-    private static final double PITCH_THRESHOLD = 30.0; // Degrees, placeholder
+  public ClimbSubsystem(int motorPort1, int motorPort2) {
+    climbMotor1 = new TalonFX(motorPort1);
+    climbMotor2 = new TalonFX(motorPort2);
 
-    public ClimbSubsystem(int motorPort1, int motorPort2) {
-        climbMotor1 = new TalonFX(motorPort1);
-        climbMotor2 = new TalonFX(motorPort2);
-        
-        // Configure second motor to follow the first
-        climbMotor2.setControl(new Follower(climbMotor1.getDeviceID(), false));
-        
-        setBrakeMode();
+    // Configure second motor to follow the first
+
+    setBrakeMode();
+  }
+
+  public void setSpeed(double speed) {
+    if ((climbMotor1.getPosition().getValueAsDouble() >= CLIMB_MAX_POSITION)
+        && (climbMotor1.getPosition().getValueAsDouble() <= CLIMB_MIN_POSITION)) {
+      stopMotor();
+    } else {
+      climbMotor1.setControl(new DutyCycleOut(speed));
+      climbMotor2.setControl(new DutyCycleOut(speed));
     }
+  }
 
-    public void setSpeed(double speed) {
-        if (shouldStop(speed)) {
-            stopMotor();
-            return;
-        }
-        climbMotor1.setControl(new DutyCycleOut(speed));
-    }
+  public void stopMotor() {
+    climbMotor1.stopMotor();
+    climbMotor2.stopMotor();
+  }
 
-    private boolean shouldStop(double speed) {
-        double position = getPosition();
-        if (speed > 0) { // Extending
-            return position >= CLIMB_MAX_POSITION;
-        }
-        return false; // Add lower limit check if needed
-    }
+  public void setBrakeMode() {
+    climbMotor1.setNeutralMode(NeutralModeValue.Brake);
+    climbMotor2.setNeutralMode(NeutralModeValue.Brake);
+  }
 
-    public void stopMotor() {
-        climbMotor1.stopMotor();
-    }
+  public void setCoastMode() {
+    climbMotor1.setNeutralMode(NeutralModeValue.Coast);
+    climbMotor2.setNeutralMode(NeutralModeValue.Coast);
+  }
 
-    public void setBrakeMode() {
-        climbMotor1.setNeutralMode(NeutralModeValue.Brake);
-        climbMotor2.setNeutralMode(NeutralModeValue.Brake);
-    }
-
-    public void setCoastMode() {
-        climbMotor1.setNeutralMode(NeutralModeValue.Coast);
-        climbMotor2.setNeutralMode(NeutralModeValue.Coast);
-    }
-
-    public double getMotorSpeed() {
-        return climbMotor1.get() * climbMotor1.getDeviceID(); // Returns percent output
-    }
-
-    public double getPosition() {
-        return climbMotor1.getPosition().getValue(); // Encoder position
-    }
-
-    public double getVelocity() {
-        return climbMotor1.getVelocity().getValue(); // Encoder velocity
-    }
+  public double getMotorSpeed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getMotorSpeed'");
+  }
 }

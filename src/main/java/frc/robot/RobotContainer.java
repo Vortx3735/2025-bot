@@ -13,8 +13,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.DefaultCoralIntakeCommand;
 import frc.robot.subsystems.AlgaeIntake;
@@ -57,7 +57,8 @@ public class RobotContainer {
   public final AlgaeIntake algaeIntake;
 
   public RobotContainer() {
-    climbSubsystem = new ClimbSubsystem(Constants.Climber.Climber_Motor_ID, Constants.Climber.Climber_Motor_ID2);
+    climbSubsystem =
+        new ClimbSubsystem(Constants.Climber.Climber_Motor_ID, Constants.Climber.Climber_Motor_ID2);
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
@@ -85,8 +86,10 @@ public class RobotContainer {
 
   private void configureBindings() {
     // climber keybinds use D-pad btw
-    joystick.povUp().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.LIFT));
-    joystick.povDown().whileTrue(new ClimbCommand(climbSubsystem, ClimbCommand.Operation.RELEASE));
+    joystick.povUp().whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(0.5), climbSubsystem));
+    joystick
+        .povDown()
+        .whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(-0.5), climbSubsystem));
     // up down right and left are for the climbing mechanism's keybinds
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
