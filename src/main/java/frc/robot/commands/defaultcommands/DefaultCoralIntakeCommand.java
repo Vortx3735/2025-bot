@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.defaultcommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralIntake;
@@ -7,13 +7,13 @@ public class DefaultCoralIntakeCommand extends Command {
   private final CoralIntake m_CoralIntake;
 
   /**
-   * Creates a new ExampleCommand.
+   * Default Coral Intake Command
    *
    * @param subsystem The subsystem used by this command.
    */
   public DefaultCoralIntakeCommand(CoralIntake subsystem) {
-    this.m_CoralIntake = subsystem;
-    addRequirements(subsystem);
+    m_CoralIntake = subsystem;
+    addRequirements(m_CoralIntake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -24,13 +24,15 @@ public class DefaultCoralIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_CoralIntake.holdWrist();
+
     if (m_CoralIntake.isCoralDetected()) {
       m_CoralIntake.moveWristToPosition(0); // Move to elevator angle (default to L4)
       m_CoralIntake.stopIntake();
       ; // Stop intake motor
     } else {
       m_CoralIntake.moveWristToPosition(-0.5); // Move to Human Player position
-      m_CoralIntake.move(1.0); // Run intake motor
+      m_CoralIntake.move(); // Run intake motor
     }
   }
 

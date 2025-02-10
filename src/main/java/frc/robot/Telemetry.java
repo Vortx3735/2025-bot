@@ -32,6 +32,8 @@ public class Telemetry {
   DoublePublisher frontLeftCancoderPub;
   DoublePublisher backRightCancoderPub;
   DoublePublisher backLeftCancoderPub;
+
+  // Climb Subsystem
   private final DoublePublisher motorSpeedPub;
   private final DoublePublisher positionPub;
   private final DoublePublisher velocityPub;
@@ -51,6 +53,7 @@ public class Telemetry {
     maxSpeedEntry.setDouble(maxSpeed);
     maxRotationEntry.setDouble(maxAngularRate);
     SignalLogger.start();
+
     NetworkTable climbTable = NetworkTableInstance.getDefault().getTable("Climbsubsystem");
     motorSpeedPub = climbTable.getDoubleTopic("motorSpeed").publish();
     positionPub = climbTable.getDoubleTopic("position").publish();

@@ -13,12 +13,16 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlgaeIntakeCommand;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.DefaultAlgaeIntakeCommand;
-import frc.robot.commands.DefaultCoralIntakeCommand;
+import frc.robot.commands.defaultcommands.DefaultAlgaeIntakeCommand;
+import frc.robot.commands.defaultcommands.DefaultClimbCommand;
+import frc.robot.commands.defaultcommands.DefaultCoralIntakeCommand;
+import frc.robot.commands.defaultcommands.DefaultElevatorCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -28,7 +32,6 @@ import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
 
 public class RobotContainer {
-  private final ClimbSubsystem climbSubsystem;
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate =
@@ -45,49 +48,64 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  private final Telemetry logger = new Telemetry(MaxSpeed, MaxAngularRate);
+  public final Telemetry logger = new Telemetry(MaxSpeed, MaxAngularRate);
 
   private final VorTXControllerXbox driver = new VorTXControllerXbox(0);
   private final VorTXControllerXbox operator = new VorTXControllerXbox(1);
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+  private final CoralIntake coralIntake =
+      new CoralIntake(
+          Constants.CoralConstants.CORAL_LEFTINTAKEMOTOR_ID,
+          Constants.CoralConstants.CORAL_RIGHTINTAKEMOTOR_ID,
+          Constants.CoralConstants.CORAL_WRISTPIVOT_MOTOR_ID,
+          Constants.CoralConstants.CORAL_WRISTPIVOT_ENCODER_ID);
+
+  private final AlgaeIntake algaeIntake =
+      new AlgaeIntake(
+          Constants.AlgaeConstants.LEFTINTAKE_MOTOR_ID,
+          Constants.AlgaeConstants.RIGHTINTAKE_MOTOR_ID,
+          Constants.AlgaeConstants.WRISTPIVOT_MOTOR_ID,
+          Constants.AlgaeConstants.WRISTPIVOT_ENCODER_ID);
+
+  private final Elevator elevator =
+      new Elevator(
+          Constants.ElevatorConstants.ELEVATOR_ENCODER_ID,
+          Constants.ElevatorConstants.ELEVATOR_LEFTMOTOR_ID,
+          Constants.ElevatorConstants.ELEVATOR_RIGHTMOTOR_ID);
+
+  private final ClimbSubsystem climbSubsystem =
+      new ClimbSubsystem(
+          Constants.ClimberConstants.CLIMBER_LEFTMOTOR_ID,
+          Constants.ClimberConstants.CLIMBER_RIGHTMOTOR_ID);
+
   /* Path follower */
   private final AutoFactory autoFactory;
   private final AutoRoutines autoRoutines;
   private final AutoChooser autoChooser = new AutoChooser();
 
-  public final CoralIntake coralIntake;
-  public final AlgaeIntake algaeIntake;
-  public final Elevator elevator;
-
   public RobotContainer() {
-    climbSubsystem =
-        new ClimbSubsystem(
-            Constants.Climber.CLIMBER_LEFTMOTOR_ID, Constants.Climber.CLIMBER_RIGHTMOTOR_ID);
+    configureBindings();
+    configureNetworkTables();
+
+    // Auton
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
     autoChooser.addRoutine("Test Auto 1", autoRoutines::testAuto1);
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    configureBindings();
-    configureNetworkTables();
+    elevator.publishInitialValues();
+    coralIntake.publishInitialValues();
+    algaeIntake.publishInitialValues();
+    climbSubsystem.publishInitialValues();
 
-    coralIntake =
-        new CoralIntake(
-            Constants.Coral_Intake.CORAL_LEFTINTAKEMOTOR_ID,
-            Constants.Coral_Intake.CORAL_WRISTPIVOT_MOTOR_ID,
-            Constants.Coral_Intake.CORAL_RIGHTINTAKEMOTOR_ID); // set to arbitrary numbers for now
-    algaeIntake = new AlgaeIntake(34, 35, 36, 37);
-    elevator =
-        new Elevator(
-            Constants.elevator.ELEVATOR_ENCODER_ID,
-            Constants.elevator.ELEVATOR_LEFTMOTOR_ID,
-            Constants.elevator.ELEVATOR_RIGHTMOTOR_ID);
-
+    // default commands
     coralIntake.setDefaultCommand(new DefaultCoralIntakeCommand(coralIntake));
     algaeIntake.setDefaultCommand(new DefaultAlgaeIntakeCommand(algaeIntake));
+    climbSubsystem.setDefaultCommand(new DefaultClimbCommand(climbSubsystem));
+    elevator.setDefaultCommand(new DefaultElevatorCommand(elevator));
   }
 
   private void configureNetworkTables() {
@@ -96,16 +114,15 @@ public class RobotContainer {
 
   public void updateNetworkTables() {
     drivetrain.registerTelemetry(logger::telemeterize);
-    // Climber Telemetary
+
+    // Climber Telemetry
     logger.updateClimbTelemetry(climbSubsystem);
   }
 
   private void configureBindings() {
     // climber keybinds use D-pad btw
-    operator.povUp().whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(0.5), climbSubsystem));
-    operator
-        .povDown()
-        .whileTrue(new RunCommand(() -> climbSubsystem.setSpeed(-0.5), climbSubsystem));
+    operator.povUp().whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
+    operator.povDown().whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
     // up down right and left are for the climbing mechanism's keybinds
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -131,15 +148,15 @@ public class RobotContainer {
                     : drive
                         .withVelocityX(
                             -driver.getLeftY()
-                                * drivetrain
-                                    .getMaxSpeed()) // Drive forward with negative Y (forward)
+                                * drivetrain.getMaxSpeed()) // Drive forward with negative Y
+                        // (forward)
                         .withVelocityY(
                             -driver.getLeftX()
                                 * drivetrain.getMaxSpeed()) // Drive left with negative X (left)
                         .withRotationalRate(
                             -driver.getRightX()
-                                * drivetrain
-                                    .getMaxRotation()) // Drive counterclockwise with negative X
+                                * drivetrain.getMaxRotation()) // Drive counterclockwise with
+            // negative X
             // (left)
             ));
 
@@ -159,8 +176,11 @@ public class RobotContainer {
     driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    // reset the field-centric heading on left bumper press
-    driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    // reset the field-centric heading on menu button
+    driver.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+    // climb
+    driver.yButton.whileTrue(new ClimbCommand(climbSubsystem));
 
     // coral intake
     operator.rightBumper().whileTrue(new CoralIntakeCommand(coralIntake));
@@ -169,16 +189,19 @@ public class RobotContainer {
     operator.rightTrigger().whileTrue(new AlgaeIntakeCommand(algaeIntake));
 
     // coral outtake
-    operator.leftBumper().whileTrue(new RunCommand(() -> coralIntake.move(-1), coralIntake));
+    operator.leftBumper().whileTrue(new RunCommand(() -> coralIntake.move(), coralIntake));
 
     // algae outtake
-    operator.leftTrigger().whileTrue(new RunCommand(() -> algaeIntake.move(-1), algaeIntake));
+    operator.leftTrigger().whileTrue(new RunCommand(() -> algaeIntake.moveIntake(), algaeIntake));
 
     // elevator down
     operator.povDown().whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
 
     // elevator up
     operator.povUp().whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
+
+    // update TalonFX configs for elevator on menu button press
+    operator.start().onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
   }
 
   public Command getAutonomousCommand() {
