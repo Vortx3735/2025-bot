@@ -88,7 +88,7 @@ public final class Constants {
     public static final int CORAL_RIGHT_PDH = 8;
     public static final int CORAL_LEFT_PDH = 9;
     public static final int ELEVATOR_LEFT_PDH = 12;
-    public static final int ELEVATOR_RIGHT_PDH =13;
+    public static final int ELEVATOR_RIGHT_PDH = 13;
     public static final int BACK_LEFT_TURN_PDH = 14;
     public static final int BACK_RIGHT_TURN_PDH = 15;
     public static final int FRONT_LEFT_TURN_PDH = 16;
