@@ -157,7 +157,7 @@ public class Elevator extends SubsystemBase {
 
   public void moveElevatorDown() {
     if (position > LOWER_LIMIT) {
-      setElevatorSpeed(-elevatorSpeed);
+      setElevatorSpeed(-elevatorSpeed*0.7);
     } else {
       stopElevator();
     }
