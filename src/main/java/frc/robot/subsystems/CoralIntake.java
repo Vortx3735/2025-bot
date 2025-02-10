@@ -84,10 +84,15 @@ public class CoralIntake extends SubsystemBase {
     wristPID = new PIDController(kp, ki, kd);
   }
 
-  public void move() {
+  public void intake() {
     // move motor
     leftCoralMotor.set(intakeSpeed);
     rightCoralMotor.set(intakeSpeed);
+  }
+
+  public void outtake(){
+    leftCoralMotor.set(-intakeSpeed);
+    rightCoralMotor.set(-intakeSpeed);
   }
 
   public void stopIntake() {

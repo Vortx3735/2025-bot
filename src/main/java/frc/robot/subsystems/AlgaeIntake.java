@@ -78,10 +78,14 @@ public class AlgaeIntake extends SubsystemBase {
     wristPID = new PIDController(kp, ki, kd);
   }
 
-  public void moveIntake() {
-    // move motor
+  public void intake() {
     leftAlgaeMotor.set(intakeSpeed);
     rightAlgaeMotor.set(intakeSpeed);
+  }
+
+  public void outtake() {
+    leftAlgaeMotor.set(-intakeSpeed);
+    rightAlgaeMotor.set(-intakeSpeed);
   }
 
   public void stopIntake() {

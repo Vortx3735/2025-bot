@@ -16,9 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.ClimbCommand;
-import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.defaultcommands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.defaultcommands.DefaultClimbCommand;
 import frc.robot.commands.defaultcommands.DefaultCoralIntakeCommand;
@@ -183,16 +181,16 @@ public class RobotContainer {
     driver.yButton.whileTrue(new ClimbCommand(climbSubsystem));
 
     // coral intake
-    operator.rightBumper().whileTrue(new CoralIntakeCommand(coralIntake));
+    operator.rightBumper().whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
 
     // algae intake
-    operator.rightTrigger().whileTrue(new AlgaeIntakeCommand(algaeIntake));
+    operator.rightTrigger().whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
 
     // coral outtake
-    operator.leftBumper().whileTrue(new RunCommand(() -> coralIntake.move(), coralIntake));
+    operator.leftBumper().whileTrue(new RunCommand(() -> coralIntake.outtake(), coralIntake));
 
     // algae outtake
-    operator.leftTrigger().whileTrue(new RunCommand(() -> algaeIntake.moveIntake(), algaeIntake));
+    operator.leftTrigger().whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
 
     // elevator down
     operator.povDown().whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
