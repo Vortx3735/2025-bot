@@ -1,25 +1,27 @@
-package frc.robot.commands;
+package frc.robot.commands.defaultcommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.ClimbSubsystem;
 
-public class ElevatorCom extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Elevator m_Elevator;
+public class DefaultClimbCommand extends Command {
+  private final ClimbSubsystem m_ClimbSubsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorCom(Elevator subsystem) {
-    m_Elevator = subsystem;
+  public DefaultClimbCommand(ClimbSubsystem subsystem) {
+    m_ClimbSubsystem = subsystem;
+    addRequirements(m_ClimbSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_ClimbSubsystem.setCoastMode();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

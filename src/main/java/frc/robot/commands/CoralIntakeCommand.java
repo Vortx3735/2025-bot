@@ -25,7 +25,7 @@ public class CoralIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_CoralIntake.move(-1);
+    m_CoralIntake.move();
   }
 
   // Called once the command ends or is interrupted.

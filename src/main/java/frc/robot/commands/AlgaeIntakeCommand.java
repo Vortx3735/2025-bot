@@ -8,7 +8,7 @@ public class AlgaeIntakeCommand extends Command {
   private final AlgaeIntake m_AlgaeIntake;
 
   /**
-   * Creates a new ExampleCommand.
+   * AlgaeIntakeCommand constructor
    *
    * @param subsystem The subsystem used by this command.
    */
@@ -24,7 +24,7 @@ public class AlgaeIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_AlgaeIntake.move(1);
+    m_AlgaeIntake.moveIntake();
   }
 
   // Called once the command ends or is interrupted.

@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.defaultcommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeIntake;
@@ -7,13 +7,13 @@ public class DefaultAlgaeIntakeCommand extends Command {
   private final AlgaeIntake m_AlgaeIntake;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new DefaultAlgaeIntakeCommand
    *
    * @param subsystem The subsystem used by this command.
    */
   public DefaultAlgaeIntakeCommand(AlgaeIntake subsystem) {
-    this.m_AlgaeIntake = subsystem;
-    addRequirements(subsystem);
+    m_AlgaeIntake = subsystem;
+    addRequirements(m_AlgaeIntake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

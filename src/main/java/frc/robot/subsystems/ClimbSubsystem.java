@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimbSubsystem extends SubsystemBase {
@@ -10,16 +11,20 @@ public class ClimbSubsystem extends SubsystemBase {
   public static final double CLIMB_MIN_POSITION = 0; // Placeholder encoder ticks
   public static final double CLIMB_MAX_POSITION = 10000; // Placeholder encoder ticks
 
+  public double speed;
+
+  /**
+   * @param motorPort1 The CAN ID of the first climb motor.
+   * @param motorPort2 The CAN ID of the second climb motor.
+   */
   public ClimbSubsystem(int motorPort1, int motorPort2) {
     climbMotor1 = new TalonFX(motorPort1);
     climbMotor2 = new TalonFX(motorPort2);
 
-    // Configure second motor to follow the first
-
     setBrakeMode();
   }
 
-  public void setSpeed(double speed) {
+  public void move() {
     if ((climbMotor1.getPosition().getValueAsDouble() >= CLIMB_MAX_POSITION)
         && (climbMotor1.getPosition().getValueAsDouble() <= CLIMB_MIN_POSITION)) {
       stopMotor();
@@ -50,5 +55,17 @@ public class ClimbSubsystem extends SubsystemBase {
   public void setCoastMode() {
     climbMotor1.setNeutralMode(NeutralModeValue.Coast);
     climbMotor2.setNeutralMode(NeutralModeValue.Coast);
+  }
+
+  public void publishInitialValues() {
+    SmartDashboard.putNumber("climb/speed", speed);
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+
+    // Update motor speed
+    speed = SmartDashboard.getNumber("climb/speed", speed);
   }
 }
