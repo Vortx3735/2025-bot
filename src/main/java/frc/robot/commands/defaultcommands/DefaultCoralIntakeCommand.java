@@ -24,7 +24,7 @@ public class DefaultCoralIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_CoralIntake.holdWrist();
+    m_CoralIntake.hold();
 
     if (m_CoralIntake.isCoralDetected()) {
       m_CoralIntake.moveWristToPosition(0); // Move to elevator angle (default to L4)
