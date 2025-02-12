@@ -89,7 +89,6 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureNetworkTables();
-
     // Auton
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
@@ -107,6 +106,8 @@ public class RobotContainer {
     algaeIntake.setDefaultCommand(new DefaultAlgaeIntakeCommand(algaeIntake));
     climbSubsystem.setDefaultCommand(new DefaultClimbCommand(climbSubsystem));
     elevator.setDefaultCommand(new DefaultElevatorCommand(elevator));
+
+    elevator.configureTalonFX();
   }
 
   private void configureNetworkTables() {
@@ -191,11 +192,13 @@ public class RobotContainer {
 
     // elevator down
     operator.povDown.whileTrue(
-        new RunCommand(() -> elevator.setElevatorSpeed(-elevator.elevatorSpeed), elevator));
+        new RunCommand(() -> elevator.setElevatorSpeed(-elevator.elevatorSpeed), elevator)
+            .until(elevator.isPastLowerLimit()));
 
     // elevator up
     operator.povUp.whileTrue(
-        new RunCommand(() -> elevator.setElevatorSpeed(elevator.elevatorSpeed), elevator));
+        new RunCommand(() -> elevator.setElevatorSpeed(elevator.elevatorSpeed), elevator)
+            .until(elevator.isPastUpperLimit()));
 
     // update TalonFX configs for elevator on menu button press
     operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
