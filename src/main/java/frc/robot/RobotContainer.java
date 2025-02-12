@@ -13,7 +13,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -198,10 +197,12 @@ public class RobotContainer {
     operator.lt.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
 
     // elevator down
-    operator.povDown.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(-elevator.elevatorSpeed), elevator));
+    operator.povDown.whileTrue(
+        new RunCommand(() -> elevator.setElevatorSpeed(-elevator.elevatorSpeed), elevator));
 
     // elevator up
-    operator.povUp.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(elevator.elevatorSpeed), elevator));
+    operator.povUp.whileTrue(
+        new RunCommand(() -> elevator.setElevatorSpeed(elevator.elevatorSpeed), elevator));
 
     // update TalonFX configs for elevator on menu button press
     operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
