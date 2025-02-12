@@ -16,9 +16,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.ClimbCommand;
-import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.ElevatorCom;
 import frc.robot.commands.defaultcommands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.defaultcommands.DefaultClimbCommand;
 import frc.robot.commands.defaultcommands.DefaultCoralIntakeCommand;
@@ -74,6 +73,9 @@ public class RobotContainer {
           Constants.ElevatorConstants.ELEVATOR_ENCODER_ID,
           Constants.ElevatorConstants.ELEVATOR_LEFTMOTOR_ID,
           Constants.ElevatorConstants.ELEVATOR_RIGHTMOTOR_ID);
+
+  private final ElevatorCom elevatorComUp = new ElevatorCom(elevator, true);
+  private final ElevatorCom elevatorComDown = new ElevatorCom(elevator, false);
 
   private final ClimbSubsystem climbSubsystem =
       new ClimbSubsystem(
@@ -177,31 +179,33 @@ public class RobotContainer {
     driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on menu button
-    driver.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // climb
     driver.yButton.whileTrue(new ClimbCommand(climbSubsystem));
 
     // coral intake
-    operator.rightBumper().whileTrue(new CoralIntakeCommand(coralIntake));
+    operator.rb.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
 
     // algae intake
-    operator.rightTrigger().whileTrue(new AlgaeIntakeCommand(algaeIntake));
+    operator.rt.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
 
     // coral outtake
-    operator.leftBumper().whileTrue(new RunCommand(() -> coralIntake.move(), coralIntake));
+    operator.lb.whileTrue(new RunCommand(() -> coralIntake.outtake(), coralIntake));
 
     // algae outtake
-    operator.leftTrigger().whileTrue(new RunCommand(() -> algaeIntake.moveIntake(), algaeIntake));
+    operator.lt.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
 
     // elevator down
-    operator.povDown().whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
+    operator.povDown.whileTrue(
+        new RunCommand(() -> elevator.setElevatorSpeed(-elevator.elevatorSpeed), elevator));
 
     // elevator up
-    operator.povUp().whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
+    operator.povUp.whileTrue(
+        new RunCommand(() -> elevator.setElevatorSpeed(elevator.elevatorSpeed), elevator));
 
     // update TalonFX configs for elevator on menu button press
-    operator.start().onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
+    operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
   }
 
   public Command getAutonomousCommand() {

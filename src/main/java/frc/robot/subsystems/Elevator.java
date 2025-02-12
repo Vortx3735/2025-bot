@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
@@ -30,8 +31,13 @@ public class Elevator extends SubsystemBase {
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
   // Define soft limits
-  public static final double LOWER_LIMIT = 0.0;
-  public static final double UPPER_LIMIT = 5.0;
+  public static double LOWER_LIMIT = 0.01;
+  public static double UPPER_LIMIT = 0.5;
+
+  public static final double KRAKEN_LOWER_LIMIT = 0;
+  public static final double KRAKEN_UPPER_LIMIT = 5;
+
+  public int x = 1;
 
   /**
    * @param encoderID CAN ID of the CANcoder.
@@ -48,7 +54,7 @@ public class Elevator extends SubsystemBase {
     configureMotionMagic();
     logPositions();
 
-    elevatorSpeed = 0.5;
+    elevatorSpeed = 0.1;
   }
 
   /** Returns the average of the two elevator motor positions */
@@ -68,6 +74,7 @@ public class Elevator extends SubsystemBase {
       cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
           0.0; // Set to an appropriate double value
       cc_cfg.MagnetSensor.MagnetOffset = 0.4;
+      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
       elevatorEncoder.getConfigurator().apply(cc_cfg);
     } catch (Exception e) {
       System.err.println("Failed to configure CANcoder: " + e.getMessage());
@@ -103,6 +110,7 @@ public class Elevator extends SubsystemBase {
       fx_cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
       fx_cfg.Feedback.SensorToMechanismRatio = 1.0;
       fx_cfg.Feedback.RotorToSensorRatio = 12.8;
+      fx_cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       leftElevatorMotor.getConfigurator().apply(fx_cfg);
       rightElevatorMotor.getConfigurator().apply(fx_cfg);
     } catch (Exception e) {
@@ -143,23 +151,9 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorSpeed(double speed) {
-    leftElevatorMotor.set(speed);
-    rightElevatorMotor.set(speed);
-  }
-
-  public void moveElevatorUp() {
-    if (position < UPPER_LIMIT) {
-      setElevatorSpeed(elevatorSpeed);
-    } else {
-      stopElevator();
-    }
-  }
-
-  public void moveElevatorDown() {
-    if (position > LOWER_LIMIT) {
-      setElevatorSpeed(-elevatorSpeed);
-    } else {
-      stopElevator();
+    if (leftElevatorMotor.getPosition().getValueAsDouble() <= KRAKEN_UPPER_LIMIT) {
+      leftElevatorMotor.set(speed);
+      rightElevatorMotor.set(speed);
     }
   }
 
@@ -219,13 +213,20 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("elevator/acceleration", acceleration);
     SmartDashboard.putNumber("elevator/jerk", jerk);
     SmartDashboard.putNumber("elevator/Elevator Speed", elevatorSpeed);
+    SmartDashboard.putNumber("UpperLimit", UPPER_LIMIT);
+    SmartDashboard.putNumber("LowerLimit", LOWER_LIMIT);
   }
 
   @Override
   public void periodic() {
     // Cancoder Values
-    position = elevatorEncoder.getPosition().getValueAsDouble();
+    // position = Math.abs(elevatorEncoder.getPositionSinceBoot().getValueAsDouble());
+    // position = (leftElevatorMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("elevator/Elevator Position", position);
+    UPPER_LIMIT = SmartDashboard.getNumber("UpperLimit", UPPER_LIMIT);
+    LOWER_LIMIT = SmartDashboard.getNumber("LowerLimit", LOWER_LIMIT);
+    x++;
+    SmartDashboard.putNumber("elevator/x", x);
 
     // Kraken Values
     krakenPosition = leftElevatorMotor.getPosition().getValueAsDouble();

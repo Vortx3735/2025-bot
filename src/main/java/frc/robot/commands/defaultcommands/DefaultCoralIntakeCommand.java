@@ -32,7 +32,7 @@ public class DefaultCoralIntakeCommand extends Command {
       ; // Stop intake motor
     } else {
       m_CoralIntake.moveWristToPosition(-0.5); // Move to Human Player position
-      m_CoralIntake.move(); // Run intake motor
+      m_CoralIntake.intake(); // Run intake motor
     }
   }
 

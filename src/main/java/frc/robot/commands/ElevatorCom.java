@@ -1,20 +1,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CoralIntake;
+import frc.robot.subsystems.Elevator;
 
-public class CoralIntakeCommand extends Command {
+public class ElevatorCom extends Command {
 
-  private final CoralIntake m_CoralIntake;
+  private final Elevator m_elevator;
+  private boolean isUp;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public CoralIntakeCommand(CoralIntake subsystem) {
-    this.m_CoralIntake = subsystem;
-    addRequirements(subsystem);
+  public ElevatorCom(Elevator subsystem, boolean isUp) {
+    m_elevator = subsystem;
+    this.isUp = isUp;
+    addRequirements(m_elevator);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -25,18 +27,27 @@ public class CoralIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_CoralIntake.move();
+    if (isUp) {
+      m_elevator.setElevatorSpeed(m_elevator.elevatorSpeed);
+    } else {
+      m_elevator.setElevatorSpeed(-m_elevator.elevatorSpeed * 0.7);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_CoralIntake.stopIntake();
+    m_elevator.stopElevator();
+    m_elevator.setBrakeMode();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (m_elevator.position >= m_elevator.UPPER_LIMIT
+        || m_elevator.position <= m_elevator.LOWER_LIMIT) {
+      return true;
+    }
     return false;
   }
 }

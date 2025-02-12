@@ -75,4 +75,25 @@ public final class Constants {
     public static final int CORAL_RIGHT_BEAM_BREAK = 2;
     public static final int ALGAE_BEAM_BREAK = 3;
   }
+
+  public static final class PDH {
+    public static final int BACK_RIGHT_DRIVE_PDH = 0;
+    public static final int BACK_LEFT_DRIVE_PDH = 1;
+    public static final int CLIMB_LEFT_PDH = 2;
+    public static final int CLIMB_RIGHT_PDH = 3;
+    public static final int ALGAE_PIVOT_PDH = 4;
+    public static final int ALGAE_RIGHT_PDH = 5;
+    public static final int ALGAE_LEFT_PDH = 6;
+    public static final int CORAL_PIVOT_PDH = 7;
+    public static final int CORAL_RIGHT_PDH = 8;
+    public static final int CORAL_LEFT_PDH = 9;
+    public static final int ELEVATOR_LEFT_PDH = 12;
+    public static final int ELEVATOR_RIGHT_PDH = 13;
+    public static final int BACK_LEFT_TURN_PDH = 14;
+    public static final int BACK_RIGHT_TURN_PDH = 15;
+    public static final int FRONT_LEFT_TURN_PDH = 16;
+    public static final int FRONT_RIGHT_TURN_PDH = 17;
+    public static final int FRONT_LEFT_DRIVE_PDH = 18;
+    public static final int FRONT_RIGHT_DRIVE_PDH = 19;
+  }
 }
