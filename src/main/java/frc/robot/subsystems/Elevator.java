@@ -69,39 +69,39 @@ public class Elevator extends SubsystemBase {
    * discontinuity point and magnet offset, and applies these settings to the ElevatorEncoder
    */
   private void configureCANcoder() {
-      CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
-      cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-          0.0; // Set to an appropriate double value
-      cc_cfg.MagnetSensor.MagnetOffset = 0.4;
-      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-      elevatorEncoder.getConfigurator().apply(cc_cfg);
+    CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
+    cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+        0.0; // Set to an appropriate double value
+    cc_cfg.MagnetSensor.MagnetOffset = 0.4;
+    cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    elevatorEncoder.getConfigurator().apply(cc_cfg);
   }
 
   public void configureTalonFX() {
-      TalonFXConfiguration fx_cfg = new TalonFXConfiguration();
-      fx_cfg.Feedback.FeedbackRemoteSensorID = elevatorEncoder.getDeviceID();
-      fx_cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-      fx_cfg.Feedback.SensorToMechanismRatio = 1.0;
-      fx_cfg.Feedback.RotorToSensorRatio = 15;
-      fx_cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    TalonFXConfiguration fx_cfg = new TalonFXConfiguration();
+    fx_cfg.Feedback.FeedbackRemoteSensorID = elevatorEncoder.getDeviceID();
+    fx_cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    fx_cfg.Feedback.SensorToMechanismRatio = 1.0;
+    fx_cfg.Feedback.RotorToSensorRatio = 15;
+    fx_cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-      // Set PID & Feedforward gains
-      
-      fx_cfg.Slot0.kP = 4.8;
-      fx_cfg.Slot0.kI = 0.0;
-      fx_cfg.Slot0.kD = 0.1;
-      fx_cfg.Slot0.kS = 0.25;
-      fx_cfg.Slot0.kV = 0.12;
-      fx_cfg.Slot0.kA = 0.01;
-      fx_cfg.Slot0.kG = 0.01;
-  
-      // Motion Magic settings
-      fx_cfg.MotionMagic.MotionMagicCruiseVelocity = 80;
-      fx_cfg.MotionMagic.MotionMagicAcceleration = 160;
-      fx_cfg.MotionMagic.MotionMagicJerk = 1600;
-  
-      leftElevatorMotor.getConfigurator().apply(fx_cfg);
-      rightElevatorMotor.getConfigurator().apply(fx_cfg);
+    // Set PID & Feedforward gains
+
+    fx_cfg.Slot0.kP = 4.8;
+    fx_cfg.Slot0.kI = 0.0;
+    fx_cfg.Slot0.kD = 0.1;
+    fx_cfg.Slot0.kS = 0.25;
+    fx_cfg.Slot0.kV = 0.12;
+    fx_cfg.Slot0.kA = 0.01;
+    fx_cfg.Slot0.kG = 0.01;
+
+    // Motion Magic settings
+    fx_cfg.MotionMagic.MotionMagicCruiseVelocity = 80;
+    fx_cfg.MotionMagic.MotionMagicAcceleration = 160;
+    fx_cfg.MotionMagic.MotionMagicJerk = 1600;
+
+    leftElevatorMotor.getConfigurator().apply(fx_cfg);
+    rightElevatorMotor.getConfigurator().apply(fx_cfg);
   }
 
   private void logPositions() {
