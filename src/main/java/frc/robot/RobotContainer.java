@@ -13,9 +13,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.ElevatorCom;
 import frc.robot.commands.defaultcommands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.defaultcommands.DefaultClimbCommand;
 import frc.robot.commands.defaultcommands.DefaultCoralIntakeCommand;
@@ -71,6 +73,9 @@ public class RobotContainer {
           Constants.ElevatorConstants.ELEVATOR_ENCODER_ID,
           Constants.ElevatorConstants.ELEVATOR_LEFTMOTOR_ID,
           Constants.ElevatorConstants.ELEVATOR_RIGHTMOTOR_ID);
+
+  private final ElevatorCom elevatorComUp = new ElevatorCom(elevator, true);
+  private final ElevatorCom elevatorComDown = new ElevatorCom(elevator, false);
 
   private final ClimbSubsystem climbSubsystem =
       new ClimbSubsystem(
@@ -189,10 +194,10 @@ public class RobotContainer {
     operator.lt.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
 
     // elevator down
-    operator.povUp.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(0.1), elevator));
+    operator.povDown.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(-elevator.elevatorSpeed), elevator));
 
     // elevator up
-    operator.povDown.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(-0.1), elevator));
+    operator.povUp.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(elevator.elevatorSpeed), elevator));
 
     // update TalonFX configs for elevator on menu button press
     operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
