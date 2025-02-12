@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.defaultcommands.DefaultAlgaeIntakeCommand;
 import frc.robot.commands.defaultcommands.DefaultClimbCommand;
 import frc.robot.commands.defaultcommands.DefaultCoralIntakeCommand;
@@ -119,8 +118,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     // climber keybinds use D-pad btw
-    operator.povUp().whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
-    operator.povDown().whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
+    operator.povUp.whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
+    operator.povDown.whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
     // up down right and left are for the climbing mechanism's keybinds
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -128,7 +127,7 @@ public class RobotContainer {
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
             () ->
-                driver.rightBumper().getAsBoolean() == true
+                driver.rb.getAsBoolean() == true
                     ? // if right bumper is pressed then reduce speed of robot
                     drive // coefficients can be changed to driver preferences
                         .withVelocityX(
@@ -158,9 +157,9 @@ public class RobotContainer {
             // (left)
             ));
 
-    driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    driver.aButton.whileTrue(drivetrain.applyRequest(() -> brake));
     driver
-        .b()
+        .bButton
         .whileTrue(
             drivetrain.applyRequest(
                 () ->
@@ -169,37 +168,34 @@ public class RobotContainer {
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    driver.view.and(driver.yButton).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    driver.view.and(driver.xButton).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    driver.menu.and(driver.yButton).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    driver.menu.and(driver.xButton).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on menu button
-    driver.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-    // climb
-    driver.yButton.whileTrue(new ClimbCommand(climbSubsystem));
+    driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // coral intake
-    operator.rightBumper().whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+    operator.rb.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
 
     // algae intake
-    operator.rightTrigger().whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
+    operator.rt.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
 
     // coral outtake
-    operator.leftBumper().whileTrue(new RunCommand(() -> coralIntake.outtake(), coralIntake));
+    operator.lb.whileTrue(new RunCommand(() -> coralIntake.outtake(), coralIntake));
 
     // algae outtake
-    operator.leftTrigger().whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
+    operator.lt.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
 
     // elevator down
-    operator.povDown().whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
+    operator.povUp.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(0.1), elevator));
 
     // elevator up
-    operator.povUp().whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
+    operator.povDown.whileTrue(new RunCommand(() -> elevator.setElevatorSpeed(-0.1), elevator));
 
     // update TalonFX configs for elevator on menu button press
-    operator.start().onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
+    operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
   }
 
   public Command getAutonomousCommand() {

@@ -47,7 +47,8 @@ public class Elevator extends SubsystemBase {
     configureTalonFX();
     configureMotionMagic();
     logPositions();
-
+    leftElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+    rightElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     elevatorSpeed = 0.5;
   }
 
@@ -184,11 +185,6 @@ public class Elevator extends SubsystemBase {
     rightElevatorMotor.set(0);
   }
 
-  public void setBrakeMode() {
-    leftElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-    rightElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-  }
-
   public void updateTalonFxConfigs() {
     // Apply new PID values if changed
     TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
@@ -204,8 +200,6 @@ public class Elevator extends SubsystemBase {
     talonFXConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
     talonFXConfigs.MotionMagic.MotionMagicJerk = jerk;
 
-    leftElevatorMotor.getConfigurator().apply(talonFXConfigs);
-    rightElevatorMotor.getConfigurator().apply(talonFXConfigs);
   }
 
   public void publishInitialValues() {
@@ -224,9 +218,8 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // Cancoder Values
-    position = elevatorEncoder.getPosition().getValueAsDouble();
+    position = leftElevatorMotor.getPosition().getValueAsDouble();
     SmartDashboard.putNumber("elevator/Elevator Position", position);
-
     // Kraken Values
     krakenPosition = leftElevatorMotor.getPosition().getValueAsDouble();
     SmartDashboard.putNumber("elevator/Kraken Position", krakenPosition);
@@ -255,16 +248,5 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber(
         "elevator/Right Motor Velocity", rightElevatorMotor.getVelocity().getValueAsDouble());
 
-    // Publish Elevator Voltage
-    SmartDashboard.putNumber(
-        "elevator/Left Motor Voltage", leftElevatorMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "elevator/Right Motor Voltage", rightElevatorMotor.getMotorVoltage().getValueAsDouble());
-
-    // Publish Motor Temperatures
-    SmartDashboard.putNumber(
-        "elevator/Left Motor Temp", leftElevatorMotor.getDeviceTemp().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "elevator/Right Motor Temp", rightElevatorMotor.getDeviceTemp().getValueAsDouble());
   }
 }

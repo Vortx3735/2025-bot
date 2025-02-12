@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,7 +22,8 @@ public class ClimbSubsystem extends SubsystemBase {
     climbMotor1 = new TalonFX(motorPort1);
     climbMotor2 = new TalonFX(motorPort2);
 
-    setBrakeMode();
+    climbMotor1.setNeutralMode(NeutralModeValue.Brake);
+    climbMotor2.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void move() {
@@ -45,16 +47,6 @@ public class ClimbSubsystem extends SubsystemBase {
 
   public double getClimbPosition() {
     return climbMotor1.getPosition().getValueAsDouble();
-  }
-
-  public void setBrakeMode() {
-    climbMotor1.setNeutralMode(NeutralModeValue.Brake);
-    climbMotor2.setNeutralMode(NeutralModeValue.Brake);
-  }
-
-  public void setCoastMode() {
-    climbMotor1.setNeutralMode(NeutralModeValue.Coast);
-    climbMotor2.setNeutralMode(NeutralModeValue.Coast);
   }
 
   public void publishInitialValues() {

@@ -19,6 +19,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -42,6 +43,9 @@ public class Telemetry {
 
   boolean exampleSensor = false;
   private final double MaxSpeed;
+  private final MechanismLigament2d elevatorVisualizer;
+  private final Mechanism2d elevatorMech = new Mechanism2d( 1, 6);
+  private final MechanismRoot2d mechBase = elevatorMech.getRoot("base",0.5,0);
 
   /**
    * Construct a telemetry object, with the specified max speed of the robot
@@ -58,6 +62,8 @@ public class Telemetry {
     motorSpeedPub = climbTable.getDoubleTopic("motorSpeed").publish();
     positionPub = climbTable.getDoubleTopic("position").publish();
     velocityPub = climbTable.getDoubleTopic("velocity").publish();
+    elevatorVisualizer = mechBase.append(new MechanismLigament2d("elevator", 0.1, 90));
+    SmartDashboard.putData("elevatorVisualizer", elevatorMech);
   }
 
   /* What to publish over networktables for telemetry */
@@ -163,13 +169,12 @@ public class Telemetry {
     /* Telemeterize the pose to a Field2d */
     fieldTypePub.set("Field2d");
     fieldPub.set(m_poseArray);
-
     /* Telemeterize the module states to a Mechanism2d */
     for (int i = 0; i < 4; ++i) {
       m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
       m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
       m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
-
+   
       SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
     }
   }
