@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.random.RandomGenerator.LeapableGenerator;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -10,7 +8,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
@@ -155,7 +152,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorSpeed(double speed) {
-    if(leftElevatorMotor.getPosition().getValueAsDouble() <= KRAKEN_UPPER_LIMIT){
+    if (leftElevatorMotor.getPosition().getValueAsDouble() <= KRAKEN_UPPER_LIMIT) {
       leftElevatorMotor.set(speed);
       rightElevatorMotor.set(speed);
     }
@@ -196,7 +193,6 @@ public class Elevator extends SubsystemBase {
     talonFXConfigs.MotionMagic.MotionMagicCruiseVelocity = cruiseVelocity;
     talonFXConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
     talonFXConfigs.MotionMagic.MotionMagicJerk = jerk;
-
   }
 
   public void publishInitialValues() {
@@ -210,8 +206,8 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("elevator/acceleration", acceleration);
     SmartDashboard.putNumber("elevator/jerk", jerk);
     SmartDashboard.putNumber("elevator/Elevator Speed", elevatorSpeed);
-    SmartDashboard.putNumber("UpperLimit",UPPER_LIMIT);
-    SmartDashboard.putNumber("LowerLimit",LOWER_LIMIT);
+    SmartDashboard.putNumber("UpperLimit", UPPER_LIMIT);
+    SmartDashboard.putNumber("LowerLimit", LOWER_LIMIT);
   }
 
   @Override
@@ -252,6 +248,5 @@ public class Elevator extends SubsystemBase {
         "elevator/Left Motor Velocity", leftElevatorMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber(
         "elevator/Right Motor Velocity", rightElevatorMotor.getVelocity().getValueAsDouble());
-
   }
 }

@@ -44,8 +44,8 @@ public class Telemetry {
   boolean exampleSensor = false;
   private final double MaxSpeed;
   private final MechanismLigament2d elevatorVisualizer;
-  private final Mechanism2d elevatorMech = new Mechanism2d( 1, 6);
-  private final MechanismRoot2d mechBase = elevatorMech.getRoot("base",0.5,0);
+  private final Mechanism2d elevatorMech = new Mechanism2d(1, 6);
+  private final MechanismRoot2d mechBase = elevatorMech.getRoot("base", 0.5, 0);
 
   /**
    * Construct a telemetry object, with the specified max speed of the robot
@@ -174,7 +174,7 @@ public class Telemetry {
       m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
       m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
       m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
-   
+
       SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
     }
   }

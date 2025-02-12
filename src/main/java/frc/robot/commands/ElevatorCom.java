@@ -43,7 +43,8 @@ public class ElevatorCom extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_elevator.position >= m_elevator.UPPER_LIMIT || m_elevator.position <= m_elevator.LOWER_LIMIT){
+    if (m_elevator.position >= m_elevator.UPPER_LIMIT
+        || m_elevator.position <= m_elevator.LOWER_LIMIT) {
       return true;
     }
     return false;
