@@ -21,7 +21,8 @@ public class ClimbSubsystem extends SubsystemBase {
     climbMotor1 = new TalonFX(motorPort1);
     climbMotor2 = new TalonFX(motorPort2);
 
-    setBrakeMode();
+    climbMotor1.setNeutralMode(NeutralModeValue.Brake);
+    climbMotor2.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void move() {
@@ -45,16 +46,6 @@ public class ClimbSubsystem extends SubsystemBase {
 
   public double getClimbPosition() {
     return climbMotor1.getPosition().getValueAsDouble();
-  }
-
-  public void setBrakeMode() {
-    climbMotor1.setNeutralMode(NeutralModeValue.Brake);
-    climbMotor2.setNeutralMode(NeutralModeValue.Brake);
-  }
-
-  public void setCoastMode() {
-    climbMotor1.setNeutralMode(NeutralModeValue.Coast);
-    climbMotor2.setNeutralMode(NeutralModeValue.Coast);
   }
 
   public void publishInitialValues() {

@@ -38,7 +38,6 @@ public class ElevatorCom extends Command {
   @Override
   public void end(boolean interrupted) {
     m_elevator.stopElevator();
-    m_elevator.setBrakeMode();
   }
 
   // Returns true when the command should end.

@@ -19,9 +19,7 @@ public class DefaultClimbCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_ClimbSubsystem.setCoastMode();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

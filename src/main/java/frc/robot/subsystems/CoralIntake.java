@@ -130,7 +130,7 @@ public class CoralIntake extends SubsystemBase {
             + wristFF.calculate(targetRadians * 2 * Math.PI, kv));
   }
 
-  public void holdWrist() {
+  public void hold() {
     coralWrist.set(
         wristPID.calculate(position * 2 * Math.PI, (int) position * 2 * Math.PI)
             + wristFF.calculate(position * 2 * Math.PI, kv));
