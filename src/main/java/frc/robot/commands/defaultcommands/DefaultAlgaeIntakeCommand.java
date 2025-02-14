@@ -13,7 +13,7 @@ public class DefaultAlgaeIntakeCommand extends Command {
    */
   public DefaultAlgaeIntakeCommand(AlgaeIntake subsystem) {
     m_AlgaeIntake = subsystem;
-    addRequirements(m_AlgaeIntake);           
+    addRequirements(m_AlgaeIntake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
