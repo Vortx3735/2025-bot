@@ -28,7 +28,7 @@ public class AlgaeIntake extends SubsystemBase {
   private final CANcoder wristEncoder;
 
   private double position;
-  private double intakeSpeed;
+  private double intakeSpeed = 0.25;
 
   /**
    * @param leftMotorID The CAN ID of the left intake motor.
@@ -50,7 +50,7 @@ public class AlgaeIntake extends SubsystemBase {
     leftAlgaeMotor.configure(
         algaeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightAlgaeMotor.configure(
-        algaeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        algaeMotorConfig.inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Initialize wrist motor and encoder
     algaeWrist1 = new SparkMax(wristID, MotorType.kBrushless);

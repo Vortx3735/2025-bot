@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.SensorConstants;
+import java.util.function.BooleanSupplier;
 
 public class CoralIntake extends SubsystemBase {
 
@@ -31,7 +32,7 @@ public class CoralIntake extends SubsystemBase {
   private SimpleMotorFeedforward wristFF;
   private double ka, kg, ks, kv;
 
-  private double intakeSpeed;
+  private double intakeSpeed = 0.25;
 
   public DigitalInput leftCoralBeamBreak = new DigitalInput(SensorConstants.CORAL_LEFT_BEAM_BREAK);
   public DigitalInput rightCoralBeamBreak =
@@ -46,6 +47,7 @@ public class CoralIntake extends SubsystemBase {
   public CoralIntake(int leftMotorId, int rightMotorId, int wristId, int wristEncoderId) {
     // Motor configurations
     SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
+    SparkMaxConfig coralRightMotorConfig = new SparkMaxConfig();
     SparkMaxConfig coralWristConfig = new SparkMaxConfig();
 
     // Initialize intake motors
@@ -57,7 +59,7 @@ public class CoralIntake extends SubsystemBase {
     leftCoralMotor.configure(
         coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightCoralMotor.configure(
-        coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        coralMotorConfig.inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Initialize wrist motor and encoder
     coralWrist = new SparkMax(wristId, MotorType.kBrushless);
@@ -88,6 +90,14 @@ public class CoralIntake extends SubsystemBase {
     // move motor
     leftCoralMotor.set(intakeSpeed);
     rightCoralMotor.set(intakeSpeed);
+  }
+  
+  // returns true assuming beam break is broken
+  public BooleanSupplier getCoralIntakeBeam() {
+    if(rightCoralBeamBreak.get() == false){
+      return () -> true;
+    }
+    return () -> false;
   }
 
   public void outtake() {
@@ -147,7 +157,7 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public boolean isCoralDetected() {
-    // check if coral is detected type shi
+    // check if coral is detected
     return !leftCoralBeamBreak.get() || !rightCoralBeamBreak.get();
   }
 
@@ -178,6 +188,9 @@ public class CoralIntake extends SubsystemBase {
     double newG = SmartDashboard.getNumber("CoralIntake/Wrist G", kg);
     double newS = SmartDashboard.getNumber("CoralIntake/Wrist S", ks);
     double newV = SmartDashboard.getNumber("CoralIntake/Wrist V", kv);
+
+    SmartDashboard.putBoolean("CoralIntake/Left Beam Break", leftCoralBeamBreak.get());
+    SmartDashboard.putBoolean("CoralIntake/Right Beam Break", rightCoralBeamBreak.get());
 
     // If the values changed, update the PID controller
     if (newP != kp || newI != ki || newD != kd) {

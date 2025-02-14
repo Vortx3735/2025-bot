@@ -179,16 +179,18 @@ public class RobotContainer {
     driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // coral intake
-    operator.rb.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+    operator.rb.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake).until(coralIntake.getCoralIntakeBeam()));
 
     // algae intake
-    operator.rt.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
+    operator.yButton.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
+    operator.aButton.whileTrue(new RunCommand(()->coralIntake.moveWrist(0.2), coralIntake));
+    operator.bButton.whileTrue(new RunCommand(()->coralIntake.moveWrist(-0.2), coralIntake));
 
     // coral outtake
     operator.lb.whileTrue(new RunCommand(() -> coralIntake.outtake(), coralIntake));
 
     // algae outtake
-    operator.lt.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
+    operator.xButton.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
 
     // elevator down
     operator.povDown.whileTrue(
