@@ -1,19 +1,23 @@
-package frc.robot.commands.defaultcommands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeIntake;
 
-public class DefaultAlgaeIntakeCommand extends Command {
+public class MoveAlgaeWrist extends Command {
   private final AlgaeIntake m_AlgaeIntake;
+  private final double position;
+  private boolean isFinishedBool;
 
   /**
    * Creates a new DefaultAlgaeIntakeCommand
    *
    * @param subsystem The subsystem used by this command.
    */
-  public DefaultAlgaeIntakeCommand(AlgaeIntake subsystem) {
+  public MoveAlgaeWrist(AlgaeIntake subsystem, double pos) {
     m_AlgaeIntake = subsystem;
+    position = pos;
     addRequirements(m_AlgaeIntake);
+    isFinishedBool = false;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -25,8 +29,7 @@ public class DefaultAlgaeIntakeCommand extends Command {
   @Override
   public void execute() {
     // m_AlgaeIntake.hold();
-    m_AlgaeIntake.stopIntake();
-    m_AlgaeIntake.stopWrist();
+    isFinishedBool = m_AlgaeIntake.moveWristToPositionBool(position);
   }
 
   // Called once the command ends or is interrupted.
@@ -36,6 +39,7 @@ public class DefaultAlgaeIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+
+    return isFinishedBool;
   }
 }

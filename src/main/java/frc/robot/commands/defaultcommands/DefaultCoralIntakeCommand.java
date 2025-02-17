@@ -35,6 +35,7 @@ public class DefaultCoralIntakeCommand extends Command {
     //   m_CoralIntake.intake(); // Run intake motor
     // }
     m_CoralIntake.stopIntake();
+    m_CoralIntake.stopWrist();
   }
 
   // Called once the command ends or is interrupted.
