@@ -125,7 +125,7 @@ public class Elevator extends SubsystemBase {
   public void moveElevatorToPosition(double targetPosition) {
     // Prevent moving past soft limits
 
-    // Motion Magic    
+    // Motion Magic
     leftElevatorMotor.setControl(m_request.withPosition(targetPosition));
     rightElevatorMotor.setControl(m_request.withPosition(targetPosition));
 
@@ -152,6 +152,7 @@ public class Elevator extends SubsystemBase {
       stopElevator();
     }
   }
+
   public void moveElevatorUpSlow() {
     if (position <= UPPER_LIMIT) {
       leftElevatorMotor.set(0.1);
@@ -169,6 +170,7 @@ public class Elevator extends SubsystemBase {
       stopElevator();
     }
   }
+
   public void moveElevatorDownSlow() {
     if (position >= LOWER_LIMIT) {
       leftElevatorMotor.set(-0.1);

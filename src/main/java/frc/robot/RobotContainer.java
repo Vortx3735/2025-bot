@@ -131,26 +131,39 @@ public class RobotContainer {
                         .withVelocityX(
                             -driver.getLeftY()
                                 * drivetrain.getMaxSpeed()
-                                / 6) // divide drive speed by 4
+                                / 3) // divide drive speed by 4
                         .withVelocityY(
                             -driver.getLeftX()
                                 * drivetrain.getMaxSpeed()
-                                / 6) // divide drive speed by 4
+                                / 3) // divide drive speed by 4
                         .withRotationalRate(
                             -driver.getRightX()
                                 * drivetrain.getMaxRotation()
-                                / 4) // divide turn sppeed by 3
-                    : drive
-                        .withVelocityX(
-                            -driver.getLeftY()
-                                * drivetrain.getMaxSpeed()) // Drive forward with negative Y
-                        // (forward)
-                        .withVelocityY(
-                            -driver.getLeftX()
-                                * drivetrain.getMaxSpeed()) // Drive left with negative X (left)
-                        .withRotationalRate(
-                            -driver.getRightX()
-                                * drivetrain.getMaxRotation()) // Drive counterclockwise with
+                                / 2) // divide turn sppeed by 3
+                    : driver.lb.getAsBoolean() == true
+                        ? drive
+                            .withVelocityX(
+                                -driver.getLeftY()
+                                    * drivetrain.getMaxSpeed()
+                                    / 7) // Drive forward with negative Y
+                            // (forward)
+                            .withVelocityY(
+                                -driver.getLeftX()
+                                    * drivetrain.getMaxSpeed()
+                                    / 7) // Drive left with negative X (left)
+                            .withRotationalRate(
+                                -driver.getRightX() * drivetrain.getMaxRotation() / 4)
+                        : drive
+                            .withVelocityX(
+                                -driver.getLeftY()
+                                    * drivetrain.getMaxSpeed()) // Drive forward with negative Y
+                            // (forward)
+                            .withVelocityY(
+                                -driver.getLeftX()
+                                    * drivetrain.getMaxSpeed()) // Drive left with negative X (left)
+                            .withRotationalRate(
+                                -driver.getRightX()
+                                    * drivetrain.getMaxRotation()) // Drive counterclockwise with
             // negative X
             // (left)
             ));
