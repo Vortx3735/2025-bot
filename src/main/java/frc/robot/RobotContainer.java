@@ -173,14 +173,19 @@ public class RobotContainer {
 
     operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
     operator.bButton.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
-    operator.xButton.whileTrue(new MoveToSetpoint(elevator,algaeIntake,coralIntake,2.57,-.2,0.35,false));
+    operator.xButton.whileTrue(
+        new MoveToSetpoint(elevator, algaeIntake, coralIntake, 2.57, -.2, 0.35, false));
     // new MoveToSetpoint(elevator,algaeIntake,coralIntake,0.97,-.12,.48);   hp setpoint
     // operator.yButton.whileTrue();
-    
+
     // coral intake
-    operator.lt.whileTrue(new MoveToSetpoint(elevator,algaeIntake,coralIntake,1,-.12,.48,true));
+    operator.lt.whileTrue(
+        new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.12, .48, true));
     // coral outtake
-    operator.rt.whileTrue(new SequentialCommandGroup(new RunCommand(() -> coralIntake.outtake(), coralIntake),new RunCommand(()->algaeIntake.intake(), algaeIntake)));
+    operator.rt.whileTrue(
+        new SequentialCommandGroup(
+            new RunCommand(() -> coralIntake.outtake(), coralIntake),
+            new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
 
     // algae wrist up
     operator.rb.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
@@ -198,7 +203,8 @@ public class RobotContainer {
 
     operator.povRight.whileTrue(
         new RunCommand(() -> coralIntake.moveWristToPosition(-.2), coralIntake));
-    operator.povLeft.whileTrue(new RunCommand(()->algaeIntake.moveWristToPosition(0.35), algaeIntake));
+    operator.povLeft.whileTrue(
+        new RunCommand(() -> algaeIntake.moveWristToPosition(0.35), algaeIntake));
     // update TalonFX configs for elevator on menu button press
     operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
   }

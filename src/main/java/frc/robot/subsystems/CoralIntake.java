@@ -152,9 +152,9 @@ public class CoralIntake extends SubsystemBase {
     if (Math.abs(targetPos - position) < error) {
       coralWrist.stopMotor();
     } else if (position < targetPos) {
-        coralWrist.set(wristSpeedUp);
+      coralWrist.set(wristSpeedUp);
     } else if (position > targetPos) {
-        coralWrist.set(wristSpeedDown);
+      coralWrist.set(wristSpeedDown);
     } else {
       coralWrist.stopMotor();
     }
@@ -172,10 +172,10 @@ public class CoralIntake extends SubsystemBase {
       coralWrist.stopMotor();
       return true;
     } else if (position < targetPos) {
-        coralWrist.set(wristSpeedUp);
+      coralWrist.set(wristSpeedUp);
       return false;
     } else if (position > targetPos) {
-        coralWrist.set(wristSpeedDown);
+      coralWrist.set(wristSpeedDown);
       return false;
     } else {
       coralWrist.stopMotor();
@@ -225,7 +225,8 @@ public class CoralIntake extends SubsystemBase {
 
     SmartDashboard.putNumber("CoralIntake/Wrist Up Speed", wristSpeedUp);
     SmartDashboard.putNumber("CoralIntake/Wrist Down Speed", wristSpeedDown);
-    SmartDashboard.putNumber("CoralIntake/Wrist Error", error);  }
+    SmartDashboard.putNumber("CoralIntake/Wrist Error", error);
+  }
 
   @Override
   public void periodic() {

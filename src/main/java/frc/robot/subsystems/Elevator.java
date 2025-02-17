@@ -85,10 +85,9 @@ public class Elevator extends SubsystemBase {
 
     // Set PID & Feedforward gains
 
-    fx_cfg.Slot0.kP = 0.2;
+    fx_cfg.Slot0.kP = 0.05;
     fx_cfg.Slot0.kI = 0.0;
     fx_cfg.Slot0.kD = 0.1;
-    // fx_cfg.Slot0.kS = 0.25;
     fx_cfg.Slot0.kV = 0.12;
     fx_cfg.Slot0.kA = 0.01;
     fx_cfg.Slot0.kG = 0.01;
@@ -125,21 +124,24 @@ public class Elevator extends SubsystemBase {
    */
   public void moveElevatorToPosition(double targetPosition) {
     // Prevent moving past soft limits
-    
-    // leftElevatorMotor.setControl(m_request.withPosition(targetPosition));
-    // rightElevatorMotor.setControl(m_request.withPosition(targetPosition));
-    if (Math.abs(targetPosition-position)<0.05){
-      stopElevator();
-    }
-    else if (targetPosition>position){
-      moveElevatorUpSlow();
-    }
-    else if (targetPosition<position){
-      moveElevatorDownSlow();
-    }
-    else{
-      stopElevator();
-    }
+
+    // Motion Magic    
+    leftElevatorMotor.setControl(m_request.withPosition(targetPosition));
+    rightElevatorMotor.setControl(m_request.withPosition(targetPosition));
+
+    // Manual PID
+    // if (Math.abs(targetPosition-position)<0.05){
+    //   stopElevator();
+    // }
+    // else if (targetPosition>position){
+    //   moveElevatorUpSlow();
+    // }
+    // else if (targetPosition<position){
+    //   moveElevatorDownSlow();
+    // }
+    // else{
+    //   stopElevator();
+    // }
   }
 
   public void moveElevatorUp() {

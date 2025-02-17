@@ -52,7 +52,7 @@ public class MoveToSetpoint extends Command {
     m_elevator.moveElevatorToPosition(targetElevatorPos);
     m_coralIntake.moveWristToPosition(targetCoralPos);
     m_algaeIntake.moveWristToPosition(targetAlgaePos);
-    if (spinintake){
+    if (spinintake) {
       m_coralIntake.intake();
     }
   }
