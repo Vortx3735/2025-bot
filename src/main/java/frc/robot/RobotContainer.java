@@ -13,11 +13,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.MoveToSetpoint;
 import frc.robot.commands.defaultcommands.*;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -131,15 +129,15 @@ public class RobotContainer {
                         .withVelocityX(
                             -driver.getLeftY()
                                 * drivetrain.getMaxSpeed()
-                                / 3) // divide drive speed by 4
+                                / 8) // divide drive speed by 4
                         .withVelocityY(
                             -driver.getLeftX()
                                 * drivetrain.getMaxSpeed()
-                                / 3) // divide drive speed by 4
+                                / 8) // divide drive speed by 4
                         .withRotationalRate(
                             -driver.getRightX()
                                 * drivetrain.getMaxRotation()
-                                / 2) // divide turn sppeed by 3
+                                / 7) // divide turn sppeed by 3
                     : driver.lb.getAsBoolean() == true
                         ? drive
                             .withVelocityX(
@@ -184,16 +182,30 @@ public class RobotContainer {
     // reset the field-centric heading on menu button
     driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
-    operator.bButton.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
-    operator.xButton.whileTrue(
-        new MoveToSetpoint(elevator, algaeIntake, coralIntake, 2.57, -.2, 0.35, false));
+    operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
+    operator.povRight.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
+    operator.yButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
+    operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35), coralIntake)); // Human Player
+    // operator.aButton.whileTrue(new MoveToL2(elevator, algaeIntake, coralIntake));
+    // operator.xButton.whileTrue(
+    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.2, 0.35, false));
+
+    // operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL2(), elevator));
+    // operator.bButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL3(), elevator));
+
+
     // new MoveToSetpoint(elevator,algaeIntake,coralIntake,0.97,-.12,.48);   hp setpoint
     // operator.yButton.whileTrue();
 
-    // coral intake
-    operator.lt.whileTrue(
-        new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.12, .48, true));
+    // coral intake use this one plz
+    // operator.lt.whileTrue(
+    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.12, .48, true));
+
+    //L2 1.67
+    //L3 3.27
+    //L4 
+    // manual intake
+    operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake()));
     // coral outtake
     operator.rt.whileTrue(
         new SequentialCommandGroup(
@@ -212,14 +224,6 @@ public class RobotContainer {
     driver.rt.whileTrue(new RunCommand(() -> climbSubsystem.move(0.1), climbSubsystem));
     // climber down
     driver.lt.whileTrue(new RunCommand(() -> climbSubsystem.move(-0.2), climbSubsystem));
-    // elevator up
-
-    operator.povRight.whileTrue(
-        new RunCommand(() -> coralIntake.moveWristToPosition(-.2), coralIntake));
-    operator.povLeft.whileTrue(
-        new RunCommand(() -> algaeIntake.moveWristToPosition(0.35), algaeIntake));
-    // update TalonFX configs for elevator on menu button press
-    operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
   }
 
   public Command getAutonomousCommand() {

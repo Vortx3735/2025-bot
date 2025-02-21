@@ -5,15 +5,12 @@ import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Elevator;
 
-public class MoveToSetpoint extends Command {
+public class MoveToL2 extends Command {
   private final Elevator m_elevator;
   private final CoralIntake m_coralIntake;
   private final AlgaeIntake m_algaeIntake;
-  private final double targetElevatorPos;
-  private final double targetCoralPos;
-  private final double targetAlgaePos;
-  private final boolean spinintake;
-
+  private boolean isFinishedBool = false;
+  
   /**
    * @param elevator The elevator subsystem used by this command.
    * @param algaeIntake The algae intake subsystem used by this command.
@@ -22,21 +19,14 @@ public class MoveToSetpoint extends Command {
    * @param coralWristPos The target angle for the coral intake wrist(0 to -1).
    * @param algaeWristPos The target angle for the algae intake wrist(0 to 1).
    */
-  public MoveToSetpoint(
+  public MoveToL2(
       Elevator elevator,
       AlgaeIntake algaeIntake,
-      CoralIntake coralIntake,
-      double elevatorPos,
-      double coralWristPos,
-      double algaeWristPos,
-      boolean spinIntake) {
+      CoralIntake coralIntake
+      ) {
     m_elevator = elevator;
     m_coralIntake = coralIntake;
     m_algaeIntake = algaeIntake;
-    targetElevatorPos = elevatorPos;
-    targetCoralPos = coralWristPos;
-    targetAlgaePos = algaeWristPos;
-    spinintake = spinIntake;
     addRequirements(m_elevator);
     addRequirements(m_coralIntake);
     addRequirements(m_algaeIntake);
@@ -49,21 +39,19 @@ public class MoveToSetpoint extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevator.moveElevatorToPosition(targetElevatorPos);
-    m_coralIntake.moveWristToPosition(targetCoralPos);
-    m_algaeIntake.moveWristToPosition(targetAlgaePos);
-    if (spinintake) {
-      m_coralIntake.intake();
+    if( m_elevator.moveElevatorToL2() && m_coralIntake.moveWristToL2()){
+      isFinishedBool = true;
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinishedBool;
   }
 }

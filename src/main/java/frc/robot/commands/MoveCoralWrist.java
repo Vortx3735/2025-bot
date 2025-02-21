@@ -1,4 +1,6 @@
 package frc.robot.commands;
+//starting wrist setpoint: -0.22
+//L2 L3 wrist setpoint: 0.49
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralIntake;
@@ -29,7 +31,7 @@ public class MoveCoralWrist extends Command {
   @Override
   public void execute() {
     // m_AlgaeIntake.hold();
-    isFinishedBool = m_CoralIntake.moveWristToPositionBool(position);
+    isFinishedBool = m_CoralIntake.moveWristToPosition(position);
   }
 
   // Called once the command ends or is interrupted.

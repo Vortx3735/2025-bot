@@ -177,16 +177,16 @@ public class AlgaeIntake extends SubsystemBase {
 
   public void publishInitialValues() {
     // Publish initial values to the dashboard
-    // SmartDashboard.putNumber("AlgaeIntake/Wrist P", kp);
-    // SmartDashboard.putNumber("AlgaeIntake/Wrist I", ki);
-    // SmartDashboard.putNumber("AlgaeIntake/Wrist D", kd);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist P", kp);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist I", ki);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist D", kd);
 
-    // SmartDashboard.putNumber("AlgaeIntake/Wrist A", ka);
-    // SmartDashboard.putNumber("AlgaeIntake/Wrist G", kg);
-    // SmartDashboard.putNumber("AlgaeIntake/Wrist S", ks);
-    // SmartDashboard.putNumber("AlgaeIntake/Wrist V", kv);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist A", ka);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist G", kg);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist S", ks);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist V", kv);
 
-    // SmartDashboard.putNumber("AlgaeIntake/intakeSpeed", intakeSpeed);
+    SmartDashboard.putNumber("AlgaeIntake/intakeSpeed", intakeSpeed);
 
     SmartDashboard.putNumber("AlgaeIntake/Wrist Up Speed", wristSpeedUp);
     SmartDashboard.putNumber("AlgaeIntake/Wrist Down Speed", wristSpeedDown);
@@ -199,40 +199,20 @@ public class AlgaeIntake extends SubsystemBase {
     position = getWristPosition();
 
     // Get PID values from the dashboard (or use default values)
-    // double newP = SmartDashboard.getNumber("AlgaeIntake/Wrist P", kp);
-    // double newI = SmartDashboard.getNumber("AlgaeIntake/Wrist I", ki);
-    // double newD = SmartDashboard.getNumber("AlgaeIntake/Wrist D", kd);
+    kp = SmartDashboard.getNumber("AlgaeIntake/Wrist P", kp);
+    ki = SmartDashboard.getNumber("AlgaeIntake/Wrist I", ki);
+    kd = SmartDashboard.getNumber("AlgaeIntake/Wrist D", kd);
 
-    // double newA = SmartDashboard.getNumber("AlgaeIntake/Wrist A", ka);
-    // double newG = SmartDashboard.getNumber("AlgaeIntake/Wrist G", kg);
-    // double newS = SmartDashboard.getNumber("AlgaeIntake/Wrist S", ks);
-    // double newV = SmartDashboard.getNumber("AlgaeIntake/Wrist V", kv);
+    ka = SmartDashboard.getNumber("AlgaeIntake/Wrist A", ka);
+    kg = SmartDashboard.getNumber("AlgaeIntake/Wrist G", kg);
+    ks = SmartDashboard.getNumber("AlgaeIntake/Wrist S", ks);
+    kv = SmartDashboard.getNumber("AlgaeIntake/Wrist V", kv);
 
     wristSpeedDown = SmartDashboard.getNumber("AlgaeIntake/Wrist Down Speed", wristDownDefault);
     wristSpeedUp = SmartDashboard.getNumber("AlgaeIntake/Wrist Up Speed", wristUpDefault);
     error = SmartDashboard.getNumber("AlgaeIntake/Wrist Error", errorDefault);
 
-    // If the values changed, update the PID controller
-    // if (newP != kp || newI != ki || newD != kd) {
-    //   wristPID.setP(newP);
-    //   wristPID.setI(newI);
-    //   wristPID.setD(newD);
-    // }
-
-    // Update FF controller
-    // if (newA != ka || newG != kg || newS != ks || newV != kv) {
-    //   ka = newA;
-    //   kg = newG;
-    //   ks = newS;
-    //   kv = newV;
-    //   wristFF = new ArmFeedforward(ks, kg, kv, ka);
-    // }
-
     intakeSpeed = SmartDashboard.getNumber("AlgaeIntake/intakeSpeed", intakeSpeed);
-
-    // Publish actual intake speed
-    SmartDashboard.putNumber("AlgaeIntake/Left Motor Speed", leftAlgaeMotor.getAppliedOutput());
-    SmartDashboard.putNumber("AlgaeIntake/Right Motor Speed", rightAlgaeMotor.getAppliedOutput());
 
     // Publish Wrist Position
     SmartDashboard.putNumber("AlgaeIntake/Wrist Position", position);

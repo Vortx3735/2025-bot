@@ -5,7 +5,7 @@ import frc.robot.subsystems.Elevator;
 
 public class DefaultElevatorCommand extends Command {
   private final Elevator m_elevator;
-
+  private double elevatorPos;
   public DefaultElevatorCommand(Elevator elevator) {
     m_elevator = elevator;
     addRequirements(m_elevator);
@@ -13,12 +13,14 @@ public class DefaultElevatorCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize(){
+    elevatorPos = m_elevator.leftElevatorMotor.getPosition().getValueAsDouble();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevator.stopElevator();
+    m_elevator.moveElevatorToPositionVoid(elevatorPos);
   }
 
   // Called once the command ends or is interrupted.
