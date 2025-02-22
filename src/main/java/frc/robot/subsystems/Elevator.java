@@ -109,6 +109,10 @@ public class Elevator extends SubsystemBase {
     leftElevatorMotor.setControl(m_request.withPosition(targetPos));
   }
 
+  public void moveElevatorToHP(){
+    moveElevatorToPositionVoid(1.015);
+  }
+
   public boolean moveElevatorToL2(){
     return moveElevatorToPosition(1.453125);
   }

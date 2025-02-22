@@ -9,6 +9,7 @@ public class DefaultElevatorCommand extends Command {
   public DefaultElevatorCommand(Elevator elevator) {
     m_elevator = elevator;
     addRequirements(m_elevator);
+    m_elevator.stopElevator();
   }
 
   // Called when the command is initially scheduled.
@@ -25,7 +26,9 @@ public class DefaultElevatorCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_elevator.stopElevator();
+  }
 
   // Returns true when the command should end.
   @Override

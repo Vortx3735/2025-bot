@@ -13,9 +13,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.MoveToHP;
 import frc.robot.commands.defaultcommands.*;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -166,6 +170,7 @@ public class RobotContainer {
             // (left)
             ));
 
+    Trigger coralDetected = new Trigger(coralIntake.getCoralIntakeBeam());
     driver.aButton.whileTrue(drivetrain.applyRequest(() -> brake));
     driver.bButton.whileTrue(
         drivetrain.applyRequest(
@@ -182,10 +187,33 @@ public class RobotContainer {
     // reset the field-centric heading on menu button
     driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+            // climber up
+            driver.rt.whileTrue(new RunCommand(() -> climbSubsystem.move(0.1), climbSubsystem));
+            // climber down
+            driver.lt.whileTrue(new RunCommand(() -> climbSubsystem.move(-0.2), climbSubsystem));
+
     operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
     operator.povRight.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
     operator.yButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
-    operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35), coralIntake)); // Human Player
+    operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35), coralIntake)); // Human Player\
+    operator.rt.whileTrue(
+        new SequentialCommandGroup(
+            new RunCommand(() -> coralIntake.outtake(), coralIntake),
+            new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
+
+    // algae wrist up
+    operator.rb.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
+    // algae wrist down
+    operator.lb.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
+    // elevator up
+    operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
+    // elevator down
+    operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
+
+    // operator.lt.whileTrue(new RunCommand(()->coralIntake.intake(),coralIntake));
+    operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+
+    operator.xButton.whileTrue(new RunCommand(() -> elevator.))
     // operator.aButton.whileTrue(new MoveToL2(elevator, algaeIntake, coralIntake));
     // operator.xButton.whileTrue(
     //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.2, 0.35, false));
@@ -205,25 +233,15 @@ public class RobotContainer {
     //L3 3.27
     //L4 
     // manual intake
-    operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake()));
+    // operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake()));
+    
+    // operator.bButton.whileTrue(new ParallelCommandGroup(
+    //     new MoveToHP(elevator, algaeIntake, coralIntake),
+    //     new RunCommand(() -> coralIntake.moveIntake(), coralIntake).until(coralIntake.getCoralIntakeBeam()))
+    // );
     // coral outtake
-    operator.rt.whileTrue(
-        new SequentialCommandGroup(
-            new RunCommand(() -> coralIntake.outtake(), coralIntake),
-            new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
 
-    // algae wrist up
-    operator.rb.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
-    // algae wrist down
-    operator.lb.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
-    // elevator up
-    operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
-    // elevator down
-    operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
-    // climber up
-    driver.rt.whileTrue(new RunCommand(() -> climbSubsystem.move(0.1), climbSubsystem));
-    // climber down
-    driver.lt.whileTrue(new RunCommand(() -> climbSubsystem.move(-0.2), climbSubsystem));
+
   }
 
   public Command getAutonomousCommand() {

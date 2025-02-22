@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -96,12 +97,9 @@ public class CoralIntake extends SubsystemBase {
     if (rightCoralDetected() || leftCoralDetected()) { //
       CommandScheduler.getInstance()
           .schedule(
-              new SequentialCommandGroup(
-                  new WaitCommand(0.2), new DefaultCoralIntakeCommand(this)));
+            new SequentialCommandGroup(new WaitCommand(0.2),new InstantCommand(()->stopIntake(), this)));
     } else {
-      CommandScheduler.getInstance().schedule(
-        new RunCommand(() -> moveIntake())
-      );
+      moveIntake();
     }
   }
 
@@ -112,10 +110,10 @@ public class CoralIntake extends SubsystemBase {
 
   // returns true assuming beam break is broken
   public BooleanSupplier getCoralIntakeBeam() {
-    if (rightCoralBeamBreak.get() == false) {
-      return () -> true;
+    if (rightCoralBeamBreak.get() && leftCoralBeamBreak.get()) {
+      return () -> false;
     }
-    return () -> false;
+    return () -> true;
   }
 
   public void outtake() {
@@ -178,6 +176,10 @@ public class CoralIntake extends SubsystemBase {
 
   public boolean moveWristToL2(){
     return moveWristToPosition(-0.51);
+  }
+
+  public boolean moveWristToHP(){
+    return moveWristToPosition(0.0);
   }
 
   public void hold() {
