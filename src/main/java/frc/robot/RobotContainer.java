@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.BooleanSupplier;
+
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -116,7 +118,12 @@ public class RobotContainer {
     // Climber Telemetry
     logger.updateClimbTelemetry(climbSubsystem);
   }
-
+  private BooleanSupplier rightStickUp(){
+    return () -> operator.getRightY() > 0.5;
+  }
+  private BooleanSupplier rightStickDown(){
+    return () -> operator.getRightY() < -0.5;
+  }
   private void configureBindings() {
     // DRIVER
     // Note that X is defined as forward according to WPILib convention,
@@ -169,6 +176,8 @@ public class RobotContainer {
             ));
 
     Trigger coralDetected = new Trigger(coralIntake.getCoralIntakeBeam());
+    Trigger rightStickUp = new Trigger(rightStickUp());
+    Trigger rightStickDown = new Trigger(rightStickDown());
     driver.aButton.whileTrue(drivetrain.applyRequest(() -> brake));
     driver.bButton.whileTrue(
         drivetrain.applyRequest(
@@ -250,6 +259,9 @@ public class RobotContainer {
     operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
     // elevator down
     operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
+    rightStickDown.whileTrue(new RunCommand(() -> algaeIntake.moveWristDown(), algaeIntake));
+    rightStickUp.whileTrue(new RunCommand(() -> algaeIntake.moveWristUp(), algaeIntake));
+    
   }
 
   public Command getAutonomousCommand() {
