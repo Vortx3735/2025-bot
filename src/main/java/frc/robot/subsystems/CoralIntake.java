@@ -84,33 +84,21 @@ public class CoralIntake extends SubsystemBase {
     coralWrist.configure(
         coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // wristSpeedDown = wristDownDefault;
-    // wristSpeedUp = wristUpDefault;
-    // error = errorDefault;
+  }
+
+  // returns true when a beam is broken
+  public Boolean getCoralDetectedBoolean() {
+    if (rightCoralBeamBreak.get() && leftCoralBeamBreak.get()) {
+      return false;
+    }
+    else {
+      return true;
+    }
   }
 
   public void intake() {
-    if (rightCoralDetected()) { // || leftCoralDetected()
-      CommandScheduler.getInstance()
-          .schedule(
-              new SequentialCommandGroup(
-                  new WaitCommand(0.2), new InstantCommand(() -> stopIntake(), this)));
-    } else {
-      moveIntake();
-    }
-  }
-
-  public void moveIntake() {
     leftCoralMotor.set(intakeSpeed);
     rightCoralMotor.set(intakeSpeed);
-  }
-
-  // returns true assuming beam break is broken
-  public BooleanSupplier getCoralIntakeBeam() {
-    if (rightCoralBeamBreak.get() && leftCoralBeamBreak.get()) {
-      return () -> false;
-    }
-    return () -> true;
   }
 
   public void outtake() {
@@ -145,20 +133,6 @@ public class CoralIntake extends SubsystemBase {
    * @Param targetPos The target position to move the wrist to.
    */
   public boolean moveWristToPosition(double targetPos) {
-    // if (targetRadians < CoralConstants.WRIST_LOWER_LIMIT
-    //     || targetRadians > CoralConstants.WRIST_UPPER_LIMIT) {
-    //   stopWrist();
-    //   return;
-    // }
-    // if (Math.abs(targetPos - position) < error) {
-    //   coralWrist.stopMotor();
-    // } else if (position < targetPos) {
-    //   coralWrist.set(wristSpeedUp);
-    // } else if (position > targetPos) {
-    //   coralWrist.set(wristSpeedDown);
-    // } else {
-    //   coralWrist.stopMotor();
-    // }
     if (Math.abs(targetPos - position) < .02) {
       stopWrist();
       return true;
@@ -191,16 +165,6 @@ public class CoralIntake extends SubsystemBase {
   public double getWristPosition() {
     // get wrist position
     return wristEncoder.getAbsolutePosition().getValueAsDouble();
-  }
-
-  public boolean leftCoralDetected() {
-    // check if coral is detected type shi
-    return !leftCoralBeamBreak.get();
-  }
-
-  public boolean rightCoralDetected() {
-    // check if coral is detected type shi
-    return !rightCoralBeamBreak.get();
   }
 
   public void publishInitialValues() {
