@@ -14,10 +14,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.defaultcommands.*;
@@ -187,19 +185,21 @@ public class RobotContainer {
     // reset the field-centric heading on menu button
     driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-            // climber up
-            driver.rt.whileTrue(new RunCommand(() -> climbSubsystem.move(0.1), climbSubsystem));
-            // climber down
-            driver.lt.whileTrue(new RunCommand(() -> climbSubsystem.move(-0.2), climbSubsystem));
+    // climber up
+    driver.rt.whileTrue(new RunCommand(() -> climbSubsystem.move(0.1), climbSubsystem));
+    // climber down
+    driver.lt.whileTrue(new RunCommand(() -> climbSubsystem.move(-0.2), climbSubsystem));
 
     operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
     operator.povRight.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
-    operator.yButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
-    // operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35), coralIntake)); // Human Player
-    operator.aButton.whileTrue(Commands.parallel(
-        new RunCommand(() -> coralIntake.moveWristToHP(), coralIntake),
-        new RunCommand(() -> elevator.moveElevatorToHP(), elevator)
-    ));
+    operator.yButton.whileTrue(
+        new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
+    // operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35),
+    // coralIntake)); // Human Player
+    operator.aButton.whileTrue(
+        Commands.parallel(
+            new RunCommand(() -> coralIntake.moveWristToHP(), coralIntake),
+            new RunCommand(() -> elevator.moveElevatorToHP(), elevator)));
     operator.rt.whileTrue(
         new SequentialCommandGroup(
             new RunCommand(() -> coralIntake.outtake(), coralIntake),
@@ -224,7 +224,6 @@ public class RobotContainer {
     // operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL2(), elevator));
     // operator.bButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL3(), elevator));
 
-
     // new MoveToSetpoint(elevator,algaeIntake,coralIntake,0.97,-.12,.48);   hp setpoint
     // operator.yButton.whileTrue();
 
@@ -232,19 +231,18 @@ public class RobotContainer {
     // operator.lt.whileTrue(
     //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.12, .48, true));
 
-    //L2 1.67
-    //L3 3.27
-    //L4 
+    // L2 1.67
+    // L3 3.27
+    // L4
     // manual intake
     // operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake()));
-    
+
     // operator.bButton.whileTrue(new ParallelCommandGroup(
     //     new MoveToHP(elevator, algaeIntake, coralIntake),
-    //     new RunCommand(() -> coralIntake.moveIntake(), coralIntake).until(coralIntake.getCoralIntakeBeam()))
+    //     new RunCommand(() -> coralIntake.moveIntake(),
+    // coralIntake).until(coralIntake.getCoralIntakeBeam()))
     // );
     // coral outtake
-
-
 
   }
 

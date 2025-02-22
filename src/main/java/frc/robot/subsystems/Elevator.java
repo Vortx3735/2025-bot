@@ -35,20 +35,21 @@ public class Elevator extends SubsystemBase {
     elevatorEncoder = new CANcoder(encoderID);
     leftElevatorMotor = new TalonFX(leftMotorID);
     rightElevatorMotor = new TalonFX(rightMotorID);
-  
+
     configureCANcoder();
     configureTalonFX();
 
     elevatorSpeed = 0.07;
   }
-  
+
   /**
    * This method configures the CANcoder sensor with specific settings for the absolute sensor
    * discontinuity point and magnet offset, and applies these settings to the ElevatorEncoder
    */
   private void configureCANcoder() {
     CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
-    cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.0; // Set to an appropriate double value
+    cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+        0.0; // Set to an appropriate double value
     cc_cfg.MagnetSensor.MagnetOffset = 0.4;
     cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     elevatorEncoder.getConfigurator().apply(cc_cfg);
@@ -82,12 +83,11 @@ public class Elevator extends SubsystemBase {
     rightElevatorMotor.getConfigurator().apply(fx_cfg);
   }
 
-
-
-  public void hold(double currentPos){
+  public void hold(double currentPos) {
     leftElevatorMotor.setControl(m_request.withPosition(currentPos));
     rightElevatorMotor.setControl(m_request.withPosition(currentPos));
   }
+
   /**
    * Moves the elevator to the specified position using Motion Magic control
    *
@@ -99,27 +99,27 @@ public class Elevator extends SubsystemBase {
     rightElevatorMotor.setControl(m_request.withPosition(targetPos));
   }
 
-  public void moveElevatorToHP(){
+  public void moveElevatorToHP() {
     moveElevatorToPosition(1.077);
   }
 
-  public void moveElevatorToL1(){
+  public void moveElevatorToL1() {
     moveElevatorToPosition(0.8);
   }
 
-  public void moveElevatorToL2(){
+  public void moveElevatorToL2() {
     moveElevatorToPosition(1.453125);
   }
 
-  public void moveElevatorToL3(){
+  public void moveElevatorToL3() {
     moveElevatorToPosition(2.7412);
   }
 
-  public void moveElevatorToL4(){
+  public void moveElevatorToL4() {
     moveElevatorToPosition(3);
   }
-  
-  public void moveElevatorToBottom(){
+
+  public void moveElevatorToBottom() {
     moveElevatorToPosition(0);
   }
 
@@ -171,8 +171,10 @@ public class Elevator extends SubsystemBase {
 
     // Values
     SmartDashboard.putNumber("elevator/Elevator Position", position);
-    SmartDashboard.putNumber("elevator/Kraken Left pos", leftElevatorMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("elevator/Kraken Right Pos", rightElevatorMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "elevator/Kraken Left pos", leftElevatorMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "elevator/Kraken Right Pos", rightElevatorMotor.getPosition().getValueAsDouble());
 
     // Add Slider to dynamically change Elevator Speed
     elevatorSpeed = SmartDashboard.getNumber("elevator/Elevator Speed", elevatorSpeed);

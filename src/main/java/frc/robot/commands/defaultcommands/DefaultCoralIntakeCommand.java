@@ -1,10 +1,6 @@
 package frc.robot.commands.defaultcommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CoralIntake;
 
 public class DefaultCoralIntakeCommand extends Command {
@@ -37,27 +33,24 @@ public class DefaultCoralIntakeCommand extends Command {
     //   m_CoralIntake.moveWristToHP(); // Move to Human Player position
     //   m_CoralIntake.intake(); // Run intake motor
     // }
-  
+
     // if (! m_CoralIntake.getCoralIntakeBeam().getAsBoolean()) {
     //  // Stop intake motor
     //  m_CoralIntake.moveWristToHP();
     // }
 
     m_CoralIntake.stopIntake();
-    
 
-    if(m_CoralIntake.getWristPosition() > -0.36){
+    if (m_CoralIntake.getWristPosition() > -0.36) {
       m_CoralIntake.stopWrist();
-    }else{
+    } else {
       m_CoralIntake.moveWristToPosition(m_CoralIntake.getWristPosition());
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

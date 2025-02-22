@@ -1,6 +1,7 @@
 package frc.robot.commands;
-//starting wrist setpoint: -0.22
-//L2 L3 wrist setpoint: 0.49
+
+// starting wrist setpoint: -0.22
+// L2 L3 wrist setpoint: 0.49
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralIntake;
