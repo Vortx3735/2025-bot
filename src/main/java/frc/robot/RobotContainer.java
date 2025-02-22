@@ -13,13 +13,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.MoveToHP;
 import frc.robot.commands.defaultcommands.*;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -133,15 +133,15 @@ public class RobotContainer {
                         .withVelocityX(
                             -driver.getLeftY()
                                 * drivetrain.getMaxSpeed()
-                                / 8) // divide drive speed by 4
+                                / 10) // divide drive speed by 4
                         .withVelocityY(
                             -driver.getLeftX()
                                 * drivetrain.getMaxSpeed()
-                                / 8) // divide drive speed by 4
+                                / 10) // divide drive speed by 4
                         .withRotationalRate(
                             -driver.getRightX()
                                 * drivetrain.getMaxRotation()
-                                / 7) // divide turn sppeed by 3
+                                / 8) // divide turn sppeed by 3
                     : driver.lb.getAsBoolean() == true
                         ? drive
                             .withVelocityX(
@@ -195,25 +195,28 @@ public class RobotContainer {
     operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
     operator.povRight.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
     operator.yButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
-    operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35), coralIntake)); // Human Player\
+    // operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35), coralIntake)); // Human Player
+    operator.aButton.whileTrue(Commands.parallel(
+        new RunCommand(() -> coralIntake.moveWristToHP(), coralIntake),
+        new RunCommand(() -> elevator.moveElevatorToHP(), elevator)
+    ));
     operator.rt.whileTrue(
         new SequentialCommandGroup(
             new RunCommand(() -> coralIntake.outtake(), coralIntake),
             new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
-
-    // algae wrist up
+    // algae outtake
     operator.rb.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
-    // algae wrist down
+    // algae intake
     operator.lb.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
     // elevator up
     operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
     // elevator down
     operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
 
-    // operator.lt.whileTrue(new RunCommand(()->coralIntake.intake(),coralIntake));
+    // operator.lt.whileTrue(new RunCommand(()-> coralIntake.moveIntake(),coralIntake));
     operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
 
-    operator.xButton.whileTrue(new RunCommand(() -> elevator.))
+    operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToHP(), elevator));
     // operator.aButton.whileTrue(new MoveToL2(elevator, algaeIntake, coralIntake));
     // operator.xButton.whileTrue(
     //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.2, 0.35, false));
@@ -240,6 +243,7 @@ public class RobotContainer {
     //     new RunCommand(() -> coralIntake.moveIntake(), coralIntake).until(coralIntake.getCoralIntakeBeam()))
     // );
     // coral outtake
+
 
 
   }

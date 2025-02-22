@@ -26,11 +26,6 @@ public class Elevator extends SubsystemBase {
   public static double LOWER_LIMIT = 0;
   public static double UPPER_LIMIT = 5;
 
-  public static double startingPosition;
-
-  // public static final double KRAKEN_LOWER_LIMIT = 0;
-  // public static final double KRAKEN_UPPER_LIMIT = 5;
-
   /**
    * @param encoderID CAN ID of the CANcoder.
    * @param leftMotorID CAN ID of the left elevator motor.
@@ -41,7 +36,6 @@ public class Elevator extends SubsystemBase {
     leftElevatorMotor = new TalonFX(leftMotorID);
     rightElevatorMotor = new TalonFX(rightMotorID);
   
-    startingPosition = leftElevatorMotor.getPosition().getValueAsDouble();
     configureCANcoder();
     configureTalonFX();
 
@@ -54,8 +48,7 @@ public class Elevator extends SubsystemBase {
    */
   private void configureCANcoder() {
     CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
-    cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-        0.0; // Set to an appropriate double value
+    cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.0; // Set to an appropriate double value
     cc_cfg.MagnetSensor.MagnetOffset = 0.4;
     cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     elevatorEncoder.getConfigurator().apply(cc_cfg);
@@ -63,7 +56,6 @@ public class Elevator extends SubsystemBase {
 
   public void configureTalonFX() {
     TalonFXConfiguration fx_cfg = new TalonFXConfiguration();
-    // fx_cfg.Feedback.FeedbackRemoteSensorID = elevatorEncoder.getDeviceID();
     fx_cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     fx_cfg.Feedback.SensorToMechanismRatio = 15.0;
     fx_cfg.Feedback.RotorToSensorRatio = 1;
@@ -83,42 +75,52 @@ public class Elevator extends SubsystemBase {
     fx_cfg.MotionMagic.MotionMagicAcceleration = 30;
     fx_cfg.MotionMagic.MotionMagicJerk = 300;
 
+    leftElevatorMotor.setPosition(0);
+    rightElevatorMotor.setPosition(0);
+
     leftElevatorMotor.getConfigurator().apply(fx_cfg);
+    rightElevatorMotor.getConfigurator().apply(fx_cfg);
   }
 
+
+
+  public void hold(double currentPos){
+    leftElevatorMotor.setControl(m_request.withPosition(currentPos));
+    rightElevatorMotor.setControl(m_request.withPosition(currentPos));
+  }
   /**
    * Moves the elevator to the specified position using Motion Magic control
    *
    * @param targetPosition The target position to move the elevator to
    */
-  public boolean moveElevatorToPosition(double targetPos) {
-    // Prevent moving past soft limits
-
-    // Motion Magic
-    double error = Math.abs(targetPos - position);
-    if(error<0.02){
-      stopElevator();
-      return true;
-    }
-    leftElevatorMotor.setControl(m_request.withPosition(targetPos));
-    return false;
-  }
-
-  public void moveElevatorToPositionVoid(double targetPos) {
+  public void moveElevatorToPosition(double targetPos) {
     // Prevent moving past soft limits
     leftElevatorMotor.setControl(m_request.withPosition(targetPos));
+    rightElevatorMotor.setControl(m_request.withPosition(targetPos));
   }
 
   public void moveElevatorToHP(){
-    moveElevatorToPositionVoid(1.015);
+    moveElevatorToPosition(1.077);
   }
 
-  public boolean moveElevatorToL2(){
-    return moveElevatorToPosition(1.453125);
+  public void moveElevatorToL1(){
+    moveElevatorToPosition(0.8);
+  }
+
+  public void moveElevatorToL2(){
+    moveElevatorToPosition(1.453125);
   }
 
   public void moveElevatorToL3(){
     moveElevatorToPosition(2.7412);
+  }
+
+  public void moveElevatorToL4(){
+    moveElevatorToPosition(3);
+  }
+  
+  public void moveElevatorToBottom(){
+    moveElevatorToPosition(0);
   }
 
   public void moveElevatorUp() {
@@ -130,28 +132,10 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  public void moveElevatorUpSlow() {
-    if (position <= UPPER_LIMIT) {
-      leftElevatorMotor.set(0.1);
-      rightElevatorMotor.set(0.1);
-    } else {
-      stopElevator();
-    }
-  }
-
   public void moveElevatorDown() {
     if (position >= LOWER_LIMIT) {
       leftElevatorMotor.set(-elevatorSpeed);
       rightElevatorMotor.set(-elevatorSpeed);
-    } else {
-      stopElevator();
-    }
-  }
-
-  public void moveElevatorDownSlow() {
-    if (position >= LOWER_LIMIT) {
-      leftElevatorMotor.set(-0.1);
-      rightElevatorMotor.set(-0.1);
     } else {
       stopElevator();
     }
@@ -180,7 +164,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    position = leftElevatorMotor.getPosition().getValueAsDouble() - startingPosition;
+    position = leftElevatorMotor.getPosition().getValueAsDouble();
 
     UPPER_LIMIT = SmartDashboard.getNumber("UpperLimit", UPPER_LIMIT);
     LOWER_LIMIT = SmartDashboard.getNumber("LowerLimit", LOWER_LIMIT);
@@ -191,9 +175,6 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("elevator/Kraken Right Pos", rightElevatorMotor.getPosition().getValueAsDouble());
 
     // Add Slider to dynamically change Elevator Speed
-    double newSpeed = SmartDashboard.getNumber("elevator/Elevator Speed", elevatorSpeed);
-    if (newSpeed != elevatorSpeed) {
-      elevatorSpeed = newSpeed;
-    }
+    elevatorSpeed = SmartDashboard.getNumber("elevator/Elevator Speed", elevatorSpeed);
   }
 }

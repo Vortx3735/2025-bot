@@ -28,7 +28,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-    Elevator.rightElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.ELEVATOR_LEFTMOTOR_ID,false));
   }
 
   @Override

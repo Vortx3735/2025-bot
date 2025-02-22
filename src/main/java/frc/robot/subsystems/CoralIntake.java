@@ -94,7 +94,7 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public void intake() {
-    if (rightCoralDetected() || leftCoralDetected()) { //
+    if (rightCoralDetected()) { // || leftCoralDetected()
       CommandScheduler.getInstance()
           .schedule(
             new SequentialCommandGroup(new WaitCommand(0.2),new InstantCommand(()->stopIntake(), this)));
@@ -174,12 +174,18 @@ public class CoralIntake extends SubsystemBase {
     return false;
   }
 
+  public boolean moveWristToHP(){
+    intake();
+    return moveWristToPosition(-0.33);
+  }
+
+
   public boolean moveWristToL2(){
     return moveWristToPosition(-0.51);
   }
 
-  public boolean moveWristToHP(){
-    return moveWristToPosition(0.0);
+  public boolean moveWristToL4(){
+    return moveWristToPosition(0.01);
   }
 
   public void hold() {
@@ -192,11 +198,6 @@ public class CoralIntake extends SubsystemBase {
     // get wrist position
     return wristEncoder.getAbsolutePosition().getValueAsDouble();
   }
-
-  // public void resetWristPosition() {
-  //   // reset wrist position
-  //   coralWrist.getEncoder().setPosition(0);
-  // }
 
   public boolean leftCoralDetected() {
     // check if coral is detected type shi
