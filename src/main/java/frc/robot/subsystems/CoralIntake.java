@@ -79,14 +79,8 @@ public class CoralIntake extends SubsystemBase {
 
     // Configure wrist motor settings
     coralWristConfig.inverted(false).idleMode(IdleMode.kBrake);
-    // coralWristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     coralWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
-    coralWrist.configure(
-        coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    // wristSpeedDown = wristDownDefault;
-    // wristSpeedUp = wristUpDefault;
-    // error = errorDefault;
+    coralWrist.configure(coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void intake() {
@@ -145,20 +139,6 @@ public class CoralIntake extends SubsystemBase {
    * @Param targetPos The target position to move the wrist to.
    */
   public boolean moveWristToPosition(double targetPos) {
-    // if (targetRadians < CoralConstants.WRIST_LOWER_LIMIT
-    //     || targetRadians > CoralConstants.WRIST_UPPER_LIMIT) {
-    //   stopWrist();
-    //   return;
-    // }
-    // if (Math.abs(targetPos - position) < error) {
-    //   coralWrist.stopMotor();
-    // } else if (position < targetPos) {
-    //   coralWrist.set(wristSpeedUp);
-    // } else if (position > targetPos) {
-    //   coralWrist.set(wristSpeedDown);
-    // } else {
-    //   coralWrist.stopMotor();
-    // }
     if (Math.abs(targetPos - position) < .02) {
       stopWrist();
       return true;
@@ -171,7 +151,7 @@ public class CoralIntake extends SubsystemBase {
     return false;
   }
 
-  public boolean moveWristToHP() {
+  public boolean moveWristToHPandIntake() {
     intake();
     return moveWristToPosition(-0.33);
   }

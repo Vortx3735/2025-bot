@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -117,8 +118,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // climber keybinds use D-pad btw
-    // up down right and left are for the climbing mechanism's keybinds
+    // DRIVER
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
@@ -190,60 +190,66 @@ public class RobotContainer {
     // climber down
     driver.lt.whileTrue(new RunCommand(() -> climbSubsystem.move(-0.2), climbSubsystem));
 
+    // OPERATOR
+
     operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
     operator.povRight.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
     operator.yButton.whileTrue(
-        new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
-    // operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35),
-    // coralIntake)); // Human Player
+        new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake));
+
+    // Human Player
     operator.aButton.whileTrue(
         Commands.parallel(
-            new RunCommand(() -> coralIntake.moveWristToHP(), coralIntake),
-            new RunCommand(() -> elevator.moveElevatorToHP(), elevator)));
+            new RunCommand(() -> coralIntake.moveWristToHPandIntake(), coralIntake),
+            new RunCommand(() -> elevator.moveElevatorToHP(), elevator)
+            )
+        );
+
+    // L2
+    operator.xButton.whileTrue(
+        Commands.parallel(
+            new RunCommand(() -> coralIntake.moveWristToL2(), coralIntake),
+            new RunCommand(() -> elevator.moveElevatorToL2(), elevator)
+        )
+    );
+
+    // L3
+    operator.yButton.whileTrue(
+        Commands.parallel(
+            new RunCommand(() -> coralIntake.moveWristToL2(), coralIntake),
+            new RunCommand(() -> elevator.moveElevatorToL3(), elevator)
+        )
+    );
+    
+    // L4
+    operator.bButton.whileTrue(
+        Commands.parallel(
+            new RunCommand(() -> coralIntake.moveWristToL4(), coralIntake),
+            new RunCommand(() -> elevator.moveElevatorToL4(), elevator)
+        )
+    );
+
+    // Outake
     operator.rt.whileTrue(
-        new SequentialCommandGroup(
+        Commands.parallel(
             new RunCommand(() -> coralIntake.outtake(), coralIntake),
             new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
+    
+    // Intake with Beam
+    operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+    // Manual Intake (No Beam)
+    operator.lb.whileTrue(
+        Commands.parallel(
+            new RunCommand(()-> coralIntake.moveIntake(), coralIntake),
+            new RunCommand(()-> algaeIntake.intake(), algaeIntake)
+        )
+    );
     // algae outtake
     operator.rb.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
-    // algae intake
-    operator.lb.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
     // elevator up
     operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
     // elevator down
     operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
-
-    // operator.lt.whileTrue(new RunCommand(()-> coralIntake.moveIntake(),coralIntake));
-    operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
-
-    operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToHP(), elevator));
-    // operator.aButton.whileTrue(new MoveToL2(elevator, algaeIntake, coralIntake));
-    // operator.xButton.whileTrue(
-    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.2, 0.35, false));
-
-    // operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL2(), elevator));
-    // operator.bButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL3(), elevator));
-
-    // new MoveToSetpoint(elevator,algaeIntake,coralIntake,0.97,-.12,.48);   hp setpoint
-    // operator.yButton.whileTrue();
-
-    // coral intake use this one plz
-    // operator.lt.whileTrue(
-    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.12, .48, true));
-
-    // L2 1.67
-    // L3 3.27
-    // L4
-    // manual intake
-    // operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake()));
-
-    // operator.bButton.whileTrue(new ParallelCommandGroup(
-    //     new MoveToHP(elevator, algaeIntake, coralIntake),
-    //     new RunCommand(() -> coralIntake.moveIntake(),
-    // coralIntake).until(coralIntake.getCoralIntakeBeam()))
-    // );
-    // coral outtake
-
   }
 
   public Command getAutonomousCommand() {

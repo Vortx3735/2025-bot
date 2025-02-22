@@ -100,15 +100,15 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveElevatorToHP() {
-    moveElevatorToPosition(1.077);
+    moveElevatorToPosition(1.0034);
   }
 
   public void moveElevatorToL1() {
-    moveElevatorToPosition(0.8);
+    moveElevatorToPosition(0.8); // guess
   }
 
   public void moveElevatorToL2() {
-    moveElevatorToPosition(1.453125);
+    moveElevatorToPosition(1.453125); 
   }
 
   public void moveElevatorToL3() {
@@ -116,7 +116,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveElevatorToL4() {
-    moveElevatorToPosition(3);
+    moveElevatorToPosition(3); // guess
   }
 
   public void moveElevatorToBottom() {
