@@ -85,7 +85,6 @@ public class RobotContainer {
   private Trigger coralDetected;
   private Trigger coralNotDetected;
 
-
   public RobotContainer() {
     configureTriggers();
     configureBindings();
@@ -174,7 +173,6 @@ public class RobotContainer {
             // (left)
             ));
 
-
     driver.aButton.whileTrue(drivetrain.applyRequest(() -> brake));
     driver.bButton.whileTrue(
         drivetrain.applyRequest(
@@ -207,7 +205,10 @@ public class RobotContainer {
     operator.yButton.whileTrue(
         new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
     // coral intake
-    operator.lt.and(coralNotDetected).whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+    operator
+        .lt
+        .and(coralNotDetected)
+        .whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
     // coral outtake
     operator.rt.whileTrue(
         new SequentialCommandGroup(
@@ -227,8 +228,10 @@ public class RobotContainer {
     coralDetected = new Trigger(() -> coralIntake.getCoralDetectedBoolean());
     coralNotDetected = coralDetected.negate();
 
-    coralDetected.onTrue(new WaitCommand(0.2).andThen(new RunCommand(() -> coralIntake.stopIntake(), coralIntake)));
+    coralDetected.onTrue(
+        new WaitCommand(0.2).andThen(new RunCommand(() -> coralIntake.stopIntake(), coralIntake)));
   }
+
   public Command getAutonomousCommand() {
     return autoChooser.selectedCommand();
   }

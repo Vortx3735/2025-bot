@@ -13,13 +13,8 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.SensorConstants;
-import java.util.function.BooleanSupplier;
 
 public class CoralIntake extends SubsystemBase {
 
@@ -83,15 +78,13 @@ public class CoralIntake extends SubsystemBase {
     coralWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
     coralWrist.configure(
         coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
   }
 
   // returns true when a beam is broken
   public Boolean getCoralDetectedBoolean() {
     if (rightCoralBeamBreak.get() && leftCoralBeamBreak.get()) {
       return false;
-    }
-    else {
+    } else {
       return true;
     }
   }
