@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.defaultcommands.*;
@@ -81,7 +82,11 @@ public class RobotContainer {
   private final AutoRoutines autoRoutines;
   private final AutoChooser autoChooser = new AutoChooser();
 
+  private Trigger coralDetected;
+  private Trigger coralNotDetected;
+
   public RobotContainer() {
+    configureTriggers();
     configureBindings();
     configureNetworkTables();
     // Auton
@@ -168,7 +173,6 @@ public class RobotContainer {
             // (left)
             ));
 
-    Trigger coralDetected = new Trigger(coralIntake.getCoralIntakeBeam());
     driver.aButton.whileTrue(drivetrain.applyRequest(() -> brake));
     driver.bButton.whileTrue(
         drivetrain.applyRequest(
@@ -192,14 +196,20 @@ public class RobotContainer {
 
     operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
     operator.povRight.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
-    operator.yButton.whileTrue(
-        new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
-    // operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35),
-    // coralIntake)); // Human Player
+
     operator.aButton.whileTrue(
         Commands.parallel(
             new RunCommand(() -> coralIntake.moveWristToHP(), coralIntake),
             new RunCommand(() -> elevator.moveElevatorToHP(), elevator)));
+    operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToHP(), elevator));
+    operator.yButton.whileTrue(
+        new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
+    // coral intake
+    operator
+        .lt
+        .and(coralNotDetected)
+        .whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+    // coral outtake
     operator.rt.whileTrue(
         new SequentialCommandGroup(
             new RunCommand(() -> coralIntake.outtake(), coralIntake),
@@ -212,38 +222,14 @@ public class RobotContainer {
     operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
     // elevator down
     operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
+  }
 
-    // operator.lt.whileTrue(new RunCommand(()-> coralIntake.moveIntake(),coralIntake));
-    operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+  private void configureTriggers() {
+    coralDetected = new Trigger(() -> coralIntake.getCoralDetectedBoolean());
+    coralNotDetected = coralDetected.negate();
 
-    operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToHP(), elevator));
-    // operator.aButton.whileTrue(new MoveToL2(elevator, algaeIntake, coralIntake));
-    // operator.xButton.whileTrue(
-    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.2, 0.35, false));
-
-    // operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL2(), elevator));
-    // operator.bButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL3(), elevator));
-
-    // new MoveToSetpoint(elevator,algaeIntake,coralIntake,0.97,-.12,.48);   hp setpoint
-    // operator.yButton.whileTrue();
-
-    // coral intake use this one plz
-    // operator.lt.whileTrue(
-    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.12, .48, true));
-
-    // L2 1.67
-    // L3 3.27
-    // L4
-    // manual intake
-    // operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake()));
-
-    // operator.bButton.whileTrue(new ParallelCommandGroup(
-    //     new MoveToHP(elevator, algaeIntake, coralIntake),
-    //     new RunCommand(() -> coralIntake.moveIntake(),
-    // coralIntake).until(coralIntake.getCoralIntakeBeam()))
-    // );
-    // coral outtake
-
+    coralDetected.onTrue(
+        new WaitCommand(0.2).andThen(new RunCommand(() -> coralIntake.stopIntake(), coralIntake)));
   }
 
   public Command getAutonomousCommand() {
