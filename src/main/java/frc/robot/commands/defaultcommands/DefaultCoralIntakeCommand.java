@@ -24,15 +24,27 @@ public class DefaultCoralIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_CoralIntake.hold();
+    // // m_CoralIntake.hold();
 
-    if (m_CoralIntake.isCoralDetected()) {
-      m_CoralIntake.moveWristToPosition(0); // Move to elevator angle (default to L4)
-      m_CoralIntake.stopIntake();
-      ; // Stop intake motor
+    // if (!m_CoralIntake.getCoralIntakeBeam().getAsBoolean()) {
+    //   m_CoralIntake.stopIntake();
+    //  // Stop intake motor
+    // } else {
+    //   m_CoralIntake.moveWristToHP(); // Move to Human Player position
+    //   m_CoralIntake.intake(); // Run intake motor
+    // }
+
+    // if (! m_CoralIntake.getCoralIntakeBeam().getAsBoolean()) {
+    //  // Stop intake motor
+    //  m_CoralIntake.moveWristToHP();
+    // }
+
+    m_CoralIntake.stopIntake();
+
+    if (m_CoralIntake.getWristPosition() > -0.36) {
+      m_CoralIntake.stopWrist();
     } else {
-      m_CoralIntake.moveWristToPosition(-0.5); // Move to Human Player position
-      m_CoralIntake.intake(); // Run intake motor
+      m_CoralIntake.moveWristToPosition(m_CoralIntake.getWristPosition());
     }
   }
 

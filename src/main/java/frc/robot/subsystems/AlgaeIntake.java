@@ -28,7 +28,16 @@ public class AlgaeIntake extends SubsystemBase {
   private final CANcoder wristEncoder;
 
   private double position;
-  private double intakeSpeed;
+  private double intakeSpeed = 0.25;
+
+  public double wristDownDefault = -0.1;
+  public double wristUpDefault = 0.2;
+  public double errorDefault = 0.03;
+
+  public double wristSpeedDown;
+  public double wristSpeedUp;
+  public double error;
+  public Object moveWristUp;
 
   /**
    * @param leftMotorID The CAN ID of the left intake motor.
@@ -50,7 +59,9 @@ public class AlgaeIntake extends SubsystemBase {
     leftAlgaeMotor.configure(
         algaeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightAlgaeMotor.configure(
-        algaeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        algaeMotorConfig.inverted(false),
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
 
     // Initialize wrist motor and encoder
     algaeWrist1 = new SparkMax(wristID, MotorType.kBrushless);
@@ -64,18 +75,9 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWrist1.configure(
         algaeWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // Initialize wrist feedforward control
-    ka = 0.0;
-    kg = 0.0;
-    ks = 0.0;
-    kv = 0.0;
-    wristFF = new ArmFeedforward(ks, kg, kv, ka);
-
-    // Initialize PID control for wrist mechanism
-    kp = 0.01;
-    ki = 0.0;
-    kd = 0.0;
-    wristPID = new PIDController(kp, ki, kd);
+    wristSpeedDown = wristDownDefault;
+    wristSpeedUp = wristUpDefault;
+    error = errorDefault;
   }
 
   public void intake() {
@@ -99,10 +101,12 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWrist1.set(speed);
   }
 
-  public void moveWristToPosition(double p) {
-    algaeWrist1.set(
-        wristPID.calculate(position * 2 * Math.PI, p * 2 * Math.PI)
-            + wristFF.calculate(p * 2 * Math.PI, kv));
+  public void moveWristUp() {
+    algaeWrist1.set(wristSpeedUp);
+  }
+
+  public void moveWristDown() {
+    algaeWrist1.set(wristSpeedDown);
   }
 
   public void stopWrist() {
@@ -112,7 +116,7 @@ public class AlgaeIntake extends SubsystemBase {
 
   public double getWristPosition() {
     // get wrist position
-    return wristEncoder.getPosition().getValueAsDouble();
+    return wristEncoder.getAbsolutePosition().getValueAsDouble();
   }
 
   public void resetWristPosition() {
@@ -124,6 +128,51 @@ public class AlgaeIntake extends SubsystemBase {
     algaeWrist1.set(
         wristPID.calculate(position * 2 * Math.PI, (int) position * 2 * Math.PI)
             + wristFF.calculate(position * 2 * Math.PI, kv));
+  }
+
+  /**
+   * @Param targetPos The target position to move the wrist to.
+   */
+  public boolean moveWristToPositionBool(double targetPos) {
+    // if (targetRadians < CoralConstants.WRIST_LOWER_LIMIT
+    //     || targetRadians > CoralConstants.WRIST_UPPER_LIMIT) {
+    //   stopWrist();
+    //   return;
+    // }
+    if (Math.abs(targetPos - position) < error) {
+      algaeWrist1.stopMotor();
+      return true;
+    } else if (position < targetPos) {
+      algaeWrist1.set(wristSpeedUp);
+      return false;
+    } else if (position > targetPos) {
+      algaeWrist1.set(wristSpeedDown);
+      return false;
+    } else {
+      algaeWrist1.stopMotor();
+      return true;
+    }
+    // wristPID.calculate(position * 2 * Math.PI, targetPos * 2 * Math.PI)
+    //     + wristFF.calculate(targetPos * 2 * Math.PI, kv));
+  }
+
+  public void moveWristToPosition(double targetPos) {
+    // if (targetRadians < CoralConstants.WRIST_LOWER_LIMIT
+    //     || targetRadians > CoralConstants.WRIST_UPPER_LIMIT) {
+    //   stopWrist();
+    //   return;
+    // }
+    if (Math.abs(targetPos - position) < error) {
+      algaeWrist1.stopMotor();
+    } else if (position < targetPos) {
+      algaeWrist1.set(wristSpeedUp);
+    } else if (position > targetPos) {
+      algaeWrist1.set(wristSpeedDown);
+    } else {
+      algaeWrist1.stopMotor();
+    }
+    // wristPID.calculate(position * 2 * Math.PI, targetPos * 2 * Math.PI)
+    //     + wristFF.calculate(targetPos * 2 * Math.PI, kv));
   }
 
   public void publishInitialValues() {
@@ -138,6 +187,10 @@ public class AlgaeIntake extends SubsystemBase {
     SmartDashboard.putNumber("AlgaeIntake/Wrist V", kv);
 
     SmartDashboard.putNumber("AlgaeIntake/intakeSpeed", intakeSpeed);
+
+    SmartDashboard.putNumber("AlgaeIntake/Wrist Up Speed", wristSpeedUp);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist Down Speed", wristSpeedDown);
+    SmartDashboard.putNumber("AlgaeIntake/Wrist Error", error);
   }
 
   @Override
@@ -146,36 +199,20 @@ public class AlgaeIntake extends SubsystemBase {
     position = getWristPosition();
 
     // Get PID values from the dashboard (or use default values)
-    double newP = SmartDashboard.getNumber("AlgaeIntake/Wrist P", kp);
-    double newI = SmartDashboard.getNumber("AlgaeIntake/Wrist I", ki);
-    double newD = SmartDashboard.getNumber("AlgaeIntake/Wrist D", kd);
+    kp = SmartDashboard.getNumber("AlgaeIntake/Wrist P", kp);
+    ki = SmartDashboard.getNumber("AlgaeIntake/Wrist I", ki);
+    kd = SmartDashboard.getNumber("AlgaeIntake/Wrist D", kd);
 
-    double newA = SmartDashboard.getNumber("AlgaeIntake/Wrist A", ka);
-    double newG = SmartDashboard.getNumber("AlgaeIntake/Wrist G", kg);
-    double newS = SmartDashboard.getNumber("AlgaeIntake/Wrist S", ks);
-    double newV = SmartDashboard.getNumber("AlgaeIntake/Wrist V", kv);
+    ka = SmartDashboard.getNumber("AlgaeIntake/Wrist A", ka);
+    kg = SmartDashboard.getNumber("AlgaeIntake/Wrist G", kg);
+    ks = SmartDashboard.getNumber("AlgaeIntake/Wrist S", ks);
+    kv = SmartDashboard.getNumber("AlgaeIntake/Wrist V", kv);
 
-    // If the values changed, update the PID controller
-    if (newP != kp || newI != ki || newD != kd) {
-      wristPID.setP(newP);
-      wristPID.setI(newI);
-      wristPID.setD(newD);
-    }
-
-    // Update FF controller
-    if (newA != ka || newG != kg || newS != ks || newV != kv) {
-      ka = newA;
-      kg = newG;
-      ks = newS;
-      kv = newV;
-      wristFF = new ArmFeedforward(ks, kg, kv, ka);
-    }
+    wristSpeedDown = SmartDashboard.getNumber("AlgaeIntake/Wrist Down Speed", wristDownDefault);
+    wristSpeedUp = SmartDashboard.getNumber("AlgaeIntake/Wrist Up Speed", wristUpDefault);
+    error = SmartDashboard.getNumber("AlgaeIntake/Wrist Error", errorDefault);
 
     intakeSpeed = SmartDashboard.getNumber("AlgaeIntake/intakeSpeed", intakeSpeed);
-
-    // Publish actual intake speed
-    SmartDashboard.putNumber("AlgaeIntake/Left Motor Speed", leftAlgaeMotor.getAppliedOutput());
-    SmartDashboard.putNumber("AlgaeIntake/Right Motor Speed", rightAlgaeMotor.getAppliedOutput());
 
     // Publish Wrist Position
     SmartDashboard.putNumber("AlgaeIntake/Wrist Position", position);

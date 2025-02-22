@@ -25,14 +25,9 @@ public class ClimbSubsystem extends SubsystemBase {
     climbMotor2.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void move() {
-    if ((climbMotor1.getPosition().getValueAsDouble() >= CLIMB_MAX_POSITION)
-        && (climbMotor1.getPosition().getValueAsDouble() <= CLIMB_MIN_POSITION)) {
-      stopMotor();
-    } else {
-      climbMotor1.set(speed);
-      climbMotor2.set(speed);
-    }
+  public void move(double speeed) {
+    climbMotor1.set(speeed);
+    climbMotor2.set(speeed);
   }
 
   public void stopMotor() {

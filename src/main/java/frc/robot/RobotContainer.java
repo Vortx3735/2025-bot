@@ -13,14 +13,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.ElevatorCom;
-import frc.robot.commands.defaultcommands.DefaultAlgaeIntakeCommand;
-import frc.robot.commands.defaultcommands.DefaultClimbCommand;
-import frc.robot.commands.defaultcommands.DefaultCoralIntakeCommand;
-import frc.robot.commands.defaultcommands.DefaultElevatorCommand;
+import frc.robot.commands.defaultcommands.*;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -73,9 +71,6 @@ public class RobotContainer {
           Constants.ElevatorConstants.ELEVATOR_LEFTMOTOR_ID,
           Constants.ElevatorConstants.ELEVATOR_RIGHTMOTOR_ID);
 
-  private final ElevatorCom elevatorComUp = new ElevatorCom(elevator, true);
-  private final ElevatorCom elevatorComDown = new ElevatorCom(elevator, false);
-
   private final ClimbSubsystem climbSubsystem =
       new ClimbSubsystem(
           Constants.ClimberConstants.CLIMBER_LEFTMOTOR_ID,
@@ -123,8 +118,6 @@ public class RobotContainer {
 
   private void configureBindings() {
     // climber keybinds use D-pad btw
-    operator.povUp.whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
-    operator.povDown.whileTrue(new RunCommand(() -> climbSubsystem.move(), climbSubsystem));
     // up down right and left are for the climbing mechanism's keybinds
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -138,30 +131,44 @@ public class RobotContainer {
                         .withVelocityX(
                             -driver.getLeftY()
                                 * drivetrain.getMaxSpeed()
-                                / 4) // divide drive speed by 4
+                                / 10) // divide drive speed by 4
                         .withVelocityY(
                             -driver.getLeftX()
                                 * drivetrain.getMaxSpeed()
-                                / 4) // divide drive speed by 4
+                                / 10) // divide drive speed by 4
                         .withRotationalRate(
                             -driver.getRightX()
                                 * drivetrain.getMaxRotation()
-                                / 3) // divide turn sppeed by 3
-                    : drive
-                        .withVelocityX(
-                            -driver.getLeftY()
-                                * drivetrain.getMaxSpeed()) // Drive forward with negative Y
-                        // (forward)
-                        .withVelocityY(
-                            -driver.getLeftX()
-                                * drivetrain.getMaxSpeed()) // Drive left with negative X (left)
-                        .withRotationalRate(
-                            -driver.getRightX()
-                                * drivetrain.getMaxRotation()) // Drive counterclockwise with
+                                / 8) // divide turn sppeed by 3
+                    : driver.lb.getAsBoolean() == true
+                        ? drive
+                            .withVelocityX(
+                                -driver.getLeftY()
+                                    * drivetrain.getMaxSpeed()
+                                    / 7) // Drive forward with negative Y
+                            // (forward)
+                            .withVelocityY(
+                                -driver.getLeftX()
+                                    * drivetrain.getMaxSpeed()
+                                    / 7) // Drive left with negative X (left)
+                            .withRotationalRate(
+                                -driver.getRightX() * drivetrain.getMaxRotation() / 4)
+                        : drive
+                            .withVelocityX(
+                                -driver.getLeftY()
+                                    * drivetrain.getMaxSpeed()) // Drive forward with negative Y
+                            // (forward)
+                            .withVelocityY(
+                                -driver.getLeftX()
+                                    * drivetrain.getMaxSpeed()) // Drive left with negative X (left)
+                            .withRotationalRate(
+                                -driver.getRightX()
+                                    * drivetrain.getMaxRotation()) // Drive counterclockwise with
             // negative X
             // (left)
             ));
 
+    Trigger coralDetected = new Trigger(coralIntake.getCoralIntakeBeam());
     driver.aButton.whileTrue(drivetrain.applyRequest(() -> brake));
     driver.bButton.whileTrue(
         drivetrain.applyRequest(
@@ -178,30 +185,65 @@ public class RobotContainer {
     // reset the field-centric heading on menu button
     driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    // coral intake
-    operator.rb.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+    // climber up
+    driver.rt.whileTrue(new RunCommand(() -> climbSubsystem.move(0.1), climbSubsystem));
+    // climber down
+    driver.lt.whileTrue(new RunCommand(() -> climbSubsystem.move(-0.2), climbSubsystem));
 
-    // algae intake
-    operator.rt.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
-
-    // coral outtake
-    operator.lb.whileTrue(new RunCommand(() -> coralIntake.outtake(), coralIntake));
-
+    operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
+    operator.povRight.whileTrue(new RunCommand(() -> coralIntake.moveWristDown(), coralIntake));
+    operator.yButton.whileTrue(
+        new RunCommand(() -> coralIntake.moveWristToPosition(-0.51), coralIntake)); // L2/L3
+    // operator.aButton.whileTrue(new RunCommand(() -> coralIntake.moveWristToPosition(-.35),
+    // coralIntake)); // Human Player
+    operator.aButton.whileTrue(
+        Commands.parallel(
+            new RunCommand(() -> coralIntake.moveWristToHP(), coralIntake),
+            new RunCommand(() -> elevator.moveElevatorToHP(), elevator)));
+    operator.rt.whileTrue(
+        new SequentialCommandGroup(
+            new RunCommand(() -> coralIntake.outtake(), coralIntake),
+            new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
     // algae outtake
-    operator.lt.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
-
-    // elevator down
-    operator.povDown.whileTrue(
-        new RunCommand(() -> elevator.setElevatorSpeed(-elevator.elevatorSpeed), elevator)
-            .until(elevator.isPastLowerLimit()));
-
+    operator.rb.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
+    // algae intake
+    operator.lb.whileTrue(new RunCommand(() -> algaeIntake.intake(), algaeIntake));
     // elevator up
-    operator.povUp.whileTrue(
-        new RunCommand(() -> elevator.setElevatorSpeed(elevator.elevatorSpeed), elevator)
-            .until(elevator.isPastUpperLimit()));
+    operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
+    // elevator down
+    operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
 
-    // update TalonFX configs for elevator on menu button press
-    operator.menu.onTrue(new InstantCommand(() -> elevator.updateTalonFxConfigs(), elevator));
+    // operator.lt.whileTrue(new RunCommand(()-> coralIntake.moveIntake(),coralIntake));
+    operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
+
+    operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToHP(), elevator));
+    // operator.aButton.whileTrue(new MoveToL2(elevator, algaeIntake, coralIntake));
+    // operator.xButton.whileTrue(
+    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.2, 0.35, false));
+
+    // operator.xButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL2(), elevator));
+    // operator.bButton.whileTrue(new RunCommand(() -> elevator.moveElevatorToL3(), elevator));
+
+    // new MoveToSetpoint(elevator,algaeIntake,coralIntake,0.97,-.12,.48);   hp setpoint
+    // operator.yButton.whileTrue();
+
+    // coral intake use this one plz
+    // operator.lt.whileTrue(
+    //     new MoveToSetpoint(elevator, algaeIntake, coralIntake, 1, -.12, .48, true));
+
+    // L2 1.67
+    // L3 3.27
+    // L4
+    // manual intake
+    // operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake()));
+
+    // operator.bButton.whileTrue(new ParallelCommandGroup(
+    //     new MoveToHP(elevator, algaeIntake, coralIntake),
+    //     new RunCommand(() -> coralIntake.moveIntake(),
+    // coralIntake).until(coralIntake.getCoralIntakeBeam()))
+    // );
+    // coral outtake
+
   }
 
   public Command getAutonomousCommand() {
