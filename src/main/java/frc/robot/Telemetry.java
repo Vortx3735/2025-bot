@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.subsystems.ClimbSubsystem;
 
 public class Telemetry {
   DoublePublisher xPub;
@@ -211,11 +210,6 @@ public class Telemetry {
                 "Robot Angle", () -> state.Pose.getRotation().getDegrees() + 180, null);
           }
         });
-  }
-
-  public void updateClimbTelemetry(ClimbSubsystem climbSubsystem) {
-    motorSpeedPub.set(climbSubsystem.getMotorSpeed());
-    positionPub.set(climbSubsystem.getClimbPosition());
   }
 
   public void stopPublishing() {

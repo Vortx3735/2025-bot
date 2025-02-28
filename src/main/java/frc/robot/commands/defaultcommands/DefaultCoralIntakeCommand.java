@@ -34,7 +34,7 @@ public class DefaultCoralIntakeCommand extends Command {
     //   m_CoralIntake.intake(); // Run intake motor
     // }
 
-    // if (! m_CoralIntake.getCoralIntakeBeam().getAsBoolean()) {
+    // if (!m_CoralIntake.hasCoral()) {
     //  // Stop intake motor
     //  m_CoralIntake.moveWristToHP();
     // }

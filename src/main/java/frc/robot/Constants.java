@@ -54,10 +54,6 @@ public final class Constants {
     public static final double WRIST_UPPER_LIMIT = Math.PI; // Define upper bound in radians
   }
 
-  public static final class ClimberConstants {
-    public static final int CLIMBER_LEFTMOTOR_ID = 21;
-    public static final int CLIMBER_RIGHTMOTOR_ID = 22;
-  }
 
   public static final class ElevatorConstants {
     public static final int ELEVATOR_LEFTMOTOR_ID = 24;
@@ -79,8 +75,6 @@ public final class Constants {
   public static final class PDH {
     public static final int BACK_RIGHT_DRIVE_PDH = 0;
     public static final int BACK_LEFT_DRIVE_PDH = 1;
-    public static final int CLIMB_LEFT_PDH = 2;
-    public static final int CLIMB_RIGHT_PDH = 3;
     public static final int ALGAE_PIVOT_PDH = 4;
     public static final int ALGAE_RIGHT_PDH = 5;
     public static final int ALGAE_LEFT_PDH = 6;
