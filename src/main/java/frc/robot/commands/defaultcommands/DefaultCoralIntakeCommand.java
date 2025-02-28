@@ -41,11 +41,13 @@ public class DefaultCoralIntakeCommand extends Command {
 
     m_CoralIntake.stopIntake();
 
-    if (m_CoralIntake.getWristPosition() > -0.36) {
-      m_CoralIntake.stopWrist();
-    } else {
-      m_CoralIntake.moveWristToPosition(m_CoralIntake.getWristPosition());
-    }
+    m_CoralIntake.moveWristToPosition(m_CoralIntake.getWristPosition());
+
+    // if (m_CoralIntake.getWristPosition() > -0.36) {
+    //   m_CoralIntake.stopWrist();
+    // } else {
+    //   m_CoralIntake.moveWristToPosition(m_CoralIntake.getWristPosition());
+    // }
   }
 
   // Called once the command ends or is interrupted.

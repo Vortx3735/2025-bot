@@ -93,6 +93,7 @@ public class RobotContainer {
 
     autoChooser.addRoutine("Test Auto 1", autoRoutines::testAuto1);
     autoChooser.addRoutine("Main Auton", autoRoutines::mAutoRoutine);
+    autoChooser.addRoutine("Test Auto 3", autoRoutines::testAuto3);
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     elevator.publishInitialValues();
@@ -231,10 +232,9 @@ public class RobotContainer {
     
     // L4
     operator.bButton.and(coralDetected).onTrue(
-        Commands.parallel(
-            new RunCommand(() -> coralIntake.moveWristToL4(), coralIntake),
-            new RunCommand(() -> elevator.moveElevatorToL4(), elevator),
-            new RunCommand(() -> algaeIntake.intake(), algaeIntake)
+        Commands.sequence(
+            elevator.moveElevatorToL4(),
+            new RunCommand(() -> coralIntake.moveWristToL4(), coralIntake)
         )
     );
 

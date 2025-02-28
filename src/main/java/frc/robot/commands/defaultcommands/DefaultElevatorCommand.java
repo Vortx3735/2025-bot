@@ -16,13 +16,12 @@ public class DefaultElevatorCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    leftElevatorPos = m_elevator.leftElevatorMotor.getPosition().getValueAsDouble();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevator.hold(leftElevatorPos);
+    m_elevator.hold(Elevator.getPosition());
   }
 
   // Called once the command ends or is interrupted.

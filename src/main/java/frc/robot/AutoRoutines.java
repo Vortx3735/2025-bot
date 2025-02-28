@@ -41,9 +41,12 @@ public class AutoRoutines {
       Commands.sequence(
         testTraj.resetOdometry(),
         testTraj.cmd(),
-        new RunCommand(() -> RobotContainer.coralIntake.moveWristToL2(), RobotContainer.coralIntake))
-        
-      );
+        Commands.parallel(
+          new RunCommand(() -> RobotContainer.coralIntake.moveWristToPosition(-0.38), RobotContainer.coralIntake),
+          new RunCommand(() -> RobotContainer.elevator.moveElevatorToPosition(0.22), RobotContainer.elevator)
+          ),
+          new RunCommand(()->RobotContainer.coralIntake.outtake(), RobotContainer.coralIntake)
+          ));
     return routine;
   }
   // public AutoRoutine testAuto2() {
