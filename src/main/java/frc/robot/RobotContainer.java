@@ -264,6 +264,9 @@ public class RobotContainer {
     operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
     // elevator down
     operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
+    rightStickDown.whileTrue(new RunCommand(() -> algaeIntake.moveWristDown(), algaeIntake));
+    rightStickUp.whileTrue(new RunCommand(() -> algaeIntake.moveWristUp(), algaeIntake));
+    
   }
 
   public Command getAutonomousCommand() {
