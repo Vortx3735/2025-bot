@@ -6,8 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import org.photonvision.PhotonCamera;
-
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -16,10 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoAlignCommand;
@@ -30,6 +25,7 @@ import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.VorTXControllerXbox;
+import org.photonvision.PhotonCamera;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -174,7 +170,6 @@ public class RobotContainer {
     Trigger algaeDetected = new Trigger(() -> algaeIntake.hasAlgae());
     Trigger algaeNotDetected = algaeDetected.negate();
 
-
     driver.aButton.whileTrue(drivetrain.applyRequest(() -> brake));
     driver.bButton.whileTrue(
         drivetrain.applyRequest(
@@ -193,10 +188,9 @@ public class RobotContainer {
     // reset the field-centric heading on menu button
     driver.menu.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    //temp button binding for algae wrist
-    driver.povUp.whileTrue(new RunCommand(()->algaeIntake.stowWrist(), algaeIntake));
-    driver.povDown.whileTrue(new RunCommand(()->algaeIntake.unstowWrist(), algaeIntake));
-
+    // temp button binding for algae wrist
+    driver.povUp.whileTrue(new RunCommand(() -> algaeIntake.stowWrist(), algaeIntake));
+    driver.povDown.whileTrue(new RunCommand(() -> algaeIntake.unstowWrist(), algaeIntake));
 
     // OPERATOR
     operator.povLeft.whileTrue(new RunCommand(() -> coralIntake.moveWristUp(), coralIntake));
@@ -209,64 +203,62 @@ public class RobotContainer {
         Commands.parallel(
             new RunCommand(() -> coralIntake.moveWristToHPandIntake(), coralIntake),
             new RunCommand(() -> elevator.moveElevatorToHP(), elevator),
-            new RunCommand(() -> algaeIntake.stowWrist(), algaeIntake)
-            )
-        );
+            new RunCommand(() -> algaeIntake.stowWrist(), algaeIntake)));
 
     // L2
-    operator.xButton.and(coralDetected).onTrue(
-        Commands.parallel(
-            new RunCommand(() -> coralIntake.moveWristToL2(), coralIntake),
-            new RunCommand(() -> elevator.moveElevatorToL2(), elevator),
-            new RunCommand(() -> algaeIntake.stowWrist(), algaeIntake)
-        )
-    );
+    operator
+        .xButton
+        .and(coralDetected)
+        .onTrue(
+            Commands.parallel(
+                new RunCommand(() -> coralIntake.moveWristToL2(), coralIntake),
+                new RunCommand(() -> elevator.moveElevatorToL2(), elevator),
+                new RunCommand(() -> algaeIntake.stowWrist(), algaeIntake)));
     // L3
-    operator.yButton.and(coralDetected).onTrue(
-        Commands.parallel(
-            new RunCommand(() -> coralIntake.moveWristToL3(), coralIntake),
-            new RunCommand(() -> elevator.moveElevatorToL3(), elevator),
-            new RunCommand(() -> algaeIntake.intake(), algaeIntake)
-        )
-    );
-    
+    operator
+        .yButton
+        .and(coralDetected)
+        .onTrue(
+            Commands.parallel(
+                new RunCommand(() -> coralIntake.moveWristToL3(), coralIntake),
+                new RunCommand(() -> elevator.moveElevatorToL3(), elevator),
+                new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
+
     // L4
-    operator.bButton.and(coralDetected).onTrue(
-        Commands.sequence(
-            elevator.moveElevatorToL4(),
-            new RunCommand(() -> coralIntake.moveWristToL4(), coralIntake)
-        )
-    );
+    operator
+        .bButton
+        .and(coralDetected)
+        .onTrue(
+            Commands.sequence(
+                elevator.moveElevatorToL4(),
+                new RunCommand(() -> coralIntake.moveWristToL4(), coralIntake)));
 
     // Outake
     operator.rt.whileTrue(
         Commands.parallel(
             new RunCommand(() -> coralIntake.outtake(), coralIntake),
             new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
-    
+
     // Intake with Beam
     operator.lt.whileTrue(new RunCommand(() -> coralIntake.intake(), coralIntake));
     // Manual Intake (No Beam)
-    operator.lb.and(algaeNotDetected).whileTrue(
-        Commands.parallel(
-            new RunCommand(()-> coralIntake.moveIntake(), coralIntake),
-            new RunCommand(()-> algaeIntake.intake(), algaeIntake)
-        )
-    );
-    operator.lb.and(algaeDetected).whileTrue(
-        Commands.parallel(
-            new RunCommand(()-> coralIntake.moveIntake(), coralIntake)
-        )
-    );
+    operator
+        .lb
+        .and(algaeNotDetected)
+        .whileTrue(
+            Commands.parallel(
+                new RunCommand(() -> coralIntake.moveIntake(), coralIntake),
+                new RunCommand(() -> algaeIntake.intake(), algaeIntake)));
+    operator
+        .lb
+        .and(algaeDetected)
+        .whileTrue(Commands.parallel(new RunCommand(() -> coralIntake.moveIntake(), coralIntake)));
     // algae outtake
     operator.rb.whileTrue(new RunCommand(() -> algaeIntake.outtake(), algaeIntake));
     // elevator up
     operator.povUp.whileTrue(new RunCommand(() -> elevator.moveElevatorUp(), elevator));
     // elevator down
     operator.povDown.whileTrue(new RunCommand(() -> elevator.moveElevatorDown(), elevator));
-    rightStickDown.whileTrue(new RunCommand(() -> algaeIntake.moveWristDown(), algaeIntake));
-    rightStickUp.whileTrue(new RunCommand(() -> algaeIntake.moveWristUp(), algaeIntake));
-    
   }
 
   public Command getAutonomousCommand() {

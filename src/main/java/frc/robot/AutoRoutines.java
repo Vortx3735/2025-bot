@@ -1,21 +1,15 @@
 package frc.robot;
 
-import java.util.Optional;
-
 import choreo.Choreo;
-import choreo.trajectory.*;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import choreo.trajectory.*;
 import choreo.trajectory.SwerveSample;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Elevator;
 import frc.robot.commands.*;
-import frc.robot.RobotContainer;
+import java.util.Optional;
 
 public class AutoRoutines {
   private final AutoFactory m_factory;
@@ -37,18 +31,24 @@ public class AutoRoutines {
     final AutoRoutine routine = m_factory.newRoutine("Test Auto 3");
     final AutoTrajectory testTraj = routine.trajectory("TestReef");
 
-    routine.active().onTrue(
-      Commands.sequence(
-        testTraj.resetOdometry(),
-        testTraj.cmd(),
-        Commands.parallel(
-          new RunCommand(() -> RobotContainer.coralIntake.moveWristToPosition(-0.38), RobotContainer.coralIntake),
-          new RunCommand(() -> RobotContainer.elevator.moveElevatorToPosition(0.22), RobotContainer.elevator)
-          ),
-          new RunCommand(()->RobotContainer.coralIntake.outtake(), RobotContainer.coralIntake)
-          ));
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                testTraj.resetOdometry(),
+                testTraj.cmd(),
+                Commands.parallel(
+                    new RunCommand(
+                        () -> RobotContainer.coralIntake.moveWristToPosition(-0.38),
+                        RobotContainer.coralIntake),
+                    new RunCommand(
+                        () -> RobotContainer.elevator.moveElevatorToPosition(0.22),
+                        RobotContainer.elevator)),
+                new RunCommand(
+                    () -> RobotContainer.coralIntake.outtake(), RobotContainer.coralIntake)));
     return routine;
   }
+
   // public AutoRoutine testAuto2() {
   // final AutoRoutine routine = m_factory.newRoutine("Test Auto 2");
   // // final AutoTrajectory testTraj = routine.trajectory("TestReef");

@@ -5,7 +5,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
@@ -19,9 +18,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.SensorConstants;
-import java.util.function.BooleanSupplier;
-
-import org.photonvision.targeting.TargetCorner;
 
 public class CoralIntake extends SubsystemBase {
 
@@ -81,17 +77,19 @@ public class CoralIntake extends SubsystemBase {
 
     // Configure wrist motor settings
     coralWristConfig.inverted(false).idleMode(IdleMode.kBrake);
-    // coralWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0, 0.0);
-    coralWrist.configure(coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // coralWristConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(1.0, 0.0,
+    // 0.0);
+    coralWrist.configure(
+        coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void intake() {
-    if (rightCoralDetected()|| leftCoralDetected()){
+    if (rightCoralDetected() || leftCoralDetected()) {
       CommandScheduler.getInstance()
           .schedule(
               new SequentialCommandGroup(
                   new WaitCommand(0.125), new InstantCommand(() -> stopIntake(), this)));
-              // new InstantCommand(() -> stopIntake(), this));
+      // new InstantCommand(() -> stopIntake(), this));
     } else {
       moveIntake();
     }
@@ -104,7 +102,7 @@ public class CoralIntake extends SubsystemBase {
 
   // returns true assuming beam break is broken
   public boolean hasCoral() {
-    if (rightCoralBeamBreak.get() && leftCoralBeamBreak.get()) { 
+    if (rightCoralBeamBreak.get() && leftCoralBeamBreak.get()) {
       return false;
     }
     return true;
@@ -158,7 +156,8 @@ public class CoralIntake extends SubsystemBase {
     intake();
     return moveWristToPosition(-0.34);
   }
-  public boolean moveWristToHP(){
+
+  public boolean moveWristToHP() {
     AlgaeIntake.resetAlgae();
     return moveWristToPosition(-0.34);
   }

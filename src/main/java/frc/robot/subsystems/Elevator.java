@@ -101,11 +101,11 @@ public class Elevator extends SubsystemBase {
     rightElevatorMotor.setControl(m_request.withPosition(targetPos));
   }
 
-  public boolean getPositionFinished(double setpoint){
-    return Math.abs(setpoint-position)<.025;
+  public boolean getPositionFinished(double setpoint) {
+    return Math.abs(setpoint - position) < .025;
   }
 
-  public static double getPosition(){
+  public static double getPosition() {
     return position;
   }
 
@@ -118,7 +118,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveElevatorToL2() {
-    moveElevatorToPosition(0.514); 
+    moveElevatorToPosition(0.514);
   }
 
   public void moveElevatorToL3() {
@@ -127,7 +127,8 @@ public class Elevator extends SubsystemBase {
 
   public Command moveElevatorToL4() {
     double setpoint = 4.9;
-    return new RunCommand(()->moveElevatorToPosition(setpoint)).until(() -> this.getPositionFinished(setpoint));
+    return new RunCommand(() -> moveElevatorToPosition(setpoint))
+        .until(() -> this.getPositionFinished(setpoint));
   }
 
   public void moveElevatorToBottom() {
@@ -142,16 +143,16 @@ public class Elevator extends SubsystemBase {
       stopElevator();
     }
   }
+
   public void moveElevatorUpSetpoint() {
     if (position <= UPPER_LIMIT) {
       // leftElevatorMotor.set(elevatorSpeed);
       // rightElevatorMotor.set(elevatorSpeed);
-      moveElevatorToPosition(position+.1);
+      moveElevatorToPosition(position + .1);
     } else {
       stopElevator();
     }
   }
-
 
   public void moveElevatorDown() {
     if (position >= LOWER_LIMIT) {
@@ -161,11 +162,12 @@ public class Elevator extends SubsystemBase {
       stopElevator();
     }
   }
+
   public void moveElevatorDownSetpoint() {
     if (position >= LOWER_LIMIT) {
       // leftElevatorMotor.set(-elevatorSpeed);
       // rightElevatorMotor.set(-elevatorSpeed);
-      moveElevatorToPosition(position-.1);
+      moveElevatorToPosition(position - .1);
     } else {
       stopElevator();
     }
